@@ -1,0 +1,54 @@
+name: Install updated title-screen police car
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/home-police-car.svg'
+      - '.github/workflows/install-home-car.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace title-screen car drawing only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          if 'titleCarImage = new Image()' not in s:
+              anchor = '  function drawTitle(dt) {'
+              if s.count(anchor) != 1:
+                  raise RuntimeError('Could not uniquely locate title-screen renderer')
+              s = s.replace(anchor, """  // The title car is a separate lightweight vector asset.
+              const titleCarImage = new Image();
+              titleCarImage.src = 'assets/home-police-car.svg';
+              """ + anchor, 1)
+          start = '    // the patrol car, side on, light bar alternating slowly'
+          if start in s:
+              first = s.index(start)
+              last = s.index('    X.restore();', first) + len('    X.restore();')
+              replacement = """    // The patrol car illustration; animation and street-light reflections remain.
+              const cx = W * 0.47, by = hz + (H - hz) * 0.3, flash = Math.floor(t * 1.6) % 2;
+              X.save(); X.translate(cx, by); X.scale(u, u);
+              if (titleCarImage.complete && titleCarImage.naturalWidth) {
+                X.drawImage(titleCarImage, -170, -140, 340, 140);
+              }
+              X.restore();"""
+              s = s[:first] + replacement + s[last:]
+          if "X.drawImage(titleCarImage, -170, -140, 340, 140);" not in s:
+              raise RuntimeError('Title car replacement not present: aborting safely')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit updated game
+        run: |
+          if ! git diff --quiet -- index.html; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html
+            git commit -m "Replace home menu patrol car with updated illustration"
+            git push
+          fi
