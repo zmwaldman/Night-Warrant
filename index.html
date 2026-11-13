@@ -4770,7 +4770,10 @@ body { display: block; background: var(--night); }
     gr.addColorStop(0, 'rgba(' + col + ',' + a + ')'); gr.addColorStop(1, 'rgba(' + col + ',0)');
     X.fillStyle = gr; X.fillRect(x - r, y - r, r * 2, r * 2);
   }
-  function drawTitle(dt) {
+  // The title car is a separate lightweight vector asset.
+    const titleCarImage = new Image();
+    titleCarImage.src = 'assets/home-police-car.svg';
+      function drawTitle(dt) {
     X = ctx; titleT += reduceMotion ? 0 : dt;
     const t = titleT, hz = H * 0.56, u = Math.min(W / 900, H / 520), bx = W * 0.56;
     // sky
@@ -4815,19 +4818,12 @@ body { display: block; background: var(--night); }
     }
     X.fillStyle = '#1f6b52'; X.fillRect(W * 0.6, my + 8 * u, 104 * u, 22 * u);
     X.fillStyle = '#dfe9e4'; X.font = '600 ' + Math.round(13 * u) + 'px "IBM Plex Mono", monospace'; X.textAlign = 'center'; X.fillText('Halloran St', W * 0.6 + 52 * u, my + 24 * u);
-    // the patrol car, side on, light bar alternating slowly
+    // The patrol car illustration; animation and street-light reflections remain.
     const cx = W * 0.47, by = hz + (H - hz) * 0.3, flash = Math.floor(t * 1.6) % 2;
     X.save(); X.translate(cx, by); X.scale(u, u);
-    X.fillStyle = '#05070a'; X.beginPath(); X.ellipse(0, 2, 170, 9, 0, 0, TAU); X.fill();
-    X.fillStyle = '#c9ced2'; X.beginPath(); X.moveTo(-150, -22); X.lineTo(-146, -50); X.lineTo(-96, -58); X.lineTo(-70, -92); X.lineTo(96, -92); X.lineTo(132, -58); X.lineTo(150, -52); X.lineTo(150, -20); X.closePath(); X.fill();
-    X.fillStyle = '#12161b';
-    X.beginPath(); X.moveTo(-86, -58); X.lineTo(-64, -86); X.lineTo(-8, -86); X.lineTo(-8, -58); X.closePath(); X.fill();
-    X.fillRect(-2, -86, 50, 28);
-    X.beginPath(); X.moveTo(54, -86); X.lineTo(92, -86); X.lineTo(118, -58); X.lineTo(54, -58); X.closePath(); X.fill();
-    X.fillStyle = '#2c4f8f'; X.fillRect(-146, -40, 296, 5); X.fillStyle = '#b8a046'; X.fillRect(-146, -34, 296, 2);
-    X.fillStyle = '#1b2230'; X.font = '700 13px "IBM Plex Mono", monospace'; X.textAlign = 'center'; X.fillText('POLICE', 22, -43);
-    for (const wx of [-98, 98]) { X.fillStyle = '#06080a'; X.beginPath(); X.arc(wx, -14, 24, 0, TAU); X.fill(); X.fillStyle = '#3b4046'; X.beginPath(); X.arc(wx, -14, 11, 0, TAU); X.fill(); }
-    X.fillStyle = flash ? '#ff4038' : '#5a1512'; X.fillRect(-26, -100, 26, 8); X.fillStyle = flash ? '#16255a' : '#3d6bff'; X.fillRect(0, -100, 26, 8);
+    if (titleCarImage.complete && titleCarImage.naturalWidth) {
+      X.drawImage(titleCarImage, -170, -140, 340, 140);
+    }
     X.restore();
     // light: a glow at each source, then its long reflection down the wet road
     X.globalCompositeOperation = 'lighter';
