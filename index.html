@@ -1,4 +1,28 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+/* Mobile-only whole-menu scaling. Keep original weapon art, icons, spacing and desktop CSS. */
+@media (pointer: coarse) and (max-width: 1000px) {
+  .veil.board, .locker, .veil.report { padding: 8px; overflow: auto; overscroll-behavior: contain; align-items: start; justify-items: center; }
+  .veil.board .panel, .locker .cab, .veil.report .panel {
+    box-sizing: border-box;
+    zoom: .80;
+    width: min(900px, calc(125vw - 20px));
+    max-height: calc(125dvh - 20px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .veil.report .panel { max-width: 600px; }
+  .veil.board .panel { max-width: 900px; }
+  .locker .cab { max-width: 900px; }
+}
+@media (pointer: coarse) and (max-width: 600px) and (orientation: portrait) {
+  .veil.board .panel, .locker .cab, .veil.report .panel {
+    zoom: .74;
+    width: calc(135.135vw - 16.22px);
+    max-height: calc(135.135dvh - 16.22px);
+  }
+  .veil.board, .locker, .veil.report { padding: 6px; }
+}
+</style></head><body>
 <title>Night Warrant</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <!-- Offline-safe: system fonts avoid a render-blocking network dependency in mobile file viewers. -->
@@ -392,134 +416,6 @@ body { display: block; background: var(--night); }
 .mobile-controls .mobile-pause { top:12px; right:82px; }
 .mobile-controls .mobile-hint { position:absolute; pointer-events:none; bottom:18px; left:17px; color:#c9c4b6a8; font:600 10px/1.5 var(--mono); text-shadow:0 2px 3px #000; }
 @media (max-width:640px) { .mobile-controls button { min-height:40px; min-width:44px; font-size:9px; } .mobile-controls .mobile-fire { width:82px;height:82px;bottom:14px;right:12px;font-size:13px; } .mobile-controls .mobile-reload { bottom:111px;right:12px; } .mobile-controls .mobile-use { bottom:164px;right:12px; } .mobile-controls .mobile-cover { bottom:123px;right:81px; } .mobile-controls .mobile-swap { bottom:66px;right:103px; } .mobile-controls .mobile-melee { bottom:12px;right:106px; } .mobile-controls .mobile-grenade { bottom:173px;right:84px; } .mobile-controls .mobile-hint { bottom:8px;left:10px;font-size:8px; } }
-/* Compact phone menus only. Wide desktop layouts and gameplay controls are untouched. */
-@media (max-width: 700px) {
-  /* Menu sheets occupy the available screen rather than extending beyond it. */
-  .veil.board, .locker, .veil.report { box-sizing: border-box; padding: 6px; overscroll-behavior: contain; }
-  .veil.board { place-items: center; }
-  .veil.board .panel {
-    box-sizing: border-box; width: 100%; max-width: none; max-height: calc(100dvh - 12px);
-    padding: 10px; gap: 7px; border-width: 3px; min-height: 0; overflow: hidden;
-  }
-  .veil.board h2 { font-size: clamp(19px, 5.5vw, 24px); }
-  .veil.board .rack-head { gap: 4px 9px; }
-  .veil.board .rack-title { font-size: 9px; }
-  .veil.board #veilText { font-size: 11px; line-height: 1.3; }
-  .veil.board #levels {
-    min-height: 0; overflow-y: auto; overscroll-behavior: contain;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-    gap: 11px 8px; padding: 9px 5px 9px;
-    align-content: start;
-  }
-  .veil.board .kit, .veil.board .kit:nth-of-type(2),
-  .veil.board .kit:nth-of-type(4), .veil.board .kit:nth-of-type(5) {
-    transform: none; gap: 3px; padding: 5px 5px 7px;
-  }
-  .veil.board .kit:nth-of-type(2):hover { transform: none; }
-  .veil.board .kit .ic { height: clamp(58px, 11vh, 85px); }
-  .veil.board .kit .ic svg { height: 60%; }
-  .veil.board .kit .nm { font-size: 13px; }
-  .veil.board .kit .ds { font-size: 8px; letter-spacing: .05em; line-height: 1.2; }
-  .veil.board .kit .ct { right: -2px; top: -7px; padding: 4px 5px 5px; font-size: 10px; }
-  .veil.board .kit .ct i { margin-top: 1px; }
-  .veil.board .kit::before { width: 9px; height: 9px; top: -4px; margin-left: -4px; }
-  .veil.board #keysBox { margin-top: 0; }
-  .veil.board #keysBox summary { font-size: 10px; }
-  .veil.board .rack-foot { gap: 5px; flex-shrink: 0; }
-  .veil.board .rack-foot button { padding: 8px 9px; font-size: 10px; }
-  .veil.board .rack-note { font-size: 9px; }
-  /* Briefing uses a compact photograph rather than growing off the phone. */
-  .veil.briefing .panel { min-height: 0; overflow-y: auto; }
-  .veil.briefing .brief {
-    position: relative; inset: auto; transform: none; width: 100%;
-    box-sizing: border-box; padding: 9px; gap: 5px; flex-shrink: 0;
-  }
-  .veil.briefing .brief h3 { font-size: 18px; }
-  .veil.briefing .brief p { font-size: 10px; line-height: 1.3; }
-  .veil.briefing #preview { max-height: 130px; object-fit: cover; }
-  .veil.briefing .brief .ct { right: 0; top: -7px; padding: 5px 7px; font-size: 11px; }
-  .brief-foot button { padding: 9px 12px; }
-
-  /* Locker remains one contained cabinet. The center scrolls; Back stays in reach. */
-  .locker { place-items: stretch; overflow: hidden; }
-  .locker .cab {
-    box-sizing: border-box; width: 100%; min-height: 0; max-height: calc(100dvh - 12px);
-    padding: 7px; gap: 5px; display: flex; flex-direction: column; overflow: hidden;
-  }
-  .locker .cab > .rack-head { flex: 0 0 auto; gap: 4px 8px; }
-  .locker .rack-title { font-size: 9px; }
-  .locker .cab-body {
-    min-height: 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain;
-    grid-template-columns: minmax(0,1fr); gap: 6px; align-content: start;
-  }
-  .locker .peg { gap: 4px; padding: 5px 5px 0; }
-  .locker .peg-row { height: 121px; padding: 0 20px; gap: 2px; }
-  .locker .peg-row .gun-page-arrow { width: 25px; height: 43px; font-size: 23px; }
-  .locker .peg-row .gun-page-arrow.prev { left: -6px; }
-  .locker .peg-row .gun-page-arrow.next { right: -6px; }
-  .locker .peg-row::before { top: 15px; height: 5px; }
-  .locker .hang { padding: 2px 0 3px; gap: 1px; font-size: 8px; }
-  .locker .hang svg { height: 82px; }
-  .locker .hang[data-gun="pistol"] svg { transform: translateY(4px) scale(.88); }
-  .locker .hang .tag { font-size: 7px; letter-spacing: 0; }
-  .locker .hang.empty-slot .slot-box { height: 78px; }
-  .locker .shelf { grid-template-columns: repeat(5,minmax(0,1fr)); gap: 3px; margin: 0 -5px; padding: 5px; }
-  .locker .bin { min-height: 49px; gap: 2px; padding: 4px 1px; font-size: 7.5px; letter-spacing: 0; }
-  .locker .bin svg { height: 14px; }
-  .locker .cab-door { padding: 7px; gap: 5px; font-size: 10px; }
-  .locker .cab-door h3 { font-size: 12px; }
-  .locker .lk-load { font-size: 9px; padding-bottom: 4px; }
-  .locker .lk-art:has(svg) { min-height: 70px; }
-  .locker .lk-art svg { max-height: 76px; max-width: 210px; }
-  .locker .gadget-art { min-height: 62px; }
-  .locker .gadget-art .ic svg { height: 52px; max-width: 120px; }
-  .locker .lk-att { gap: 3px; }
-  .locker .att-entry { gap: 2px; }
-  .locker .att-entry .kit { padding: 5px 6px; gap: 2px; font-size: 9px; }
-  .locker .kit .nm { letter-spacing: .03em; }
-  .locker .kit .ct, .locker .kit .ds { font-size: 8px; }
-  .locker .att-refund { padding: 5px; font-size: 8px; }
-  .locker .cab > .rack-foot {
-    flex: 0 0 auto; padding-top: 5px; border-top: 1px solid var(--slate-line);
-    gap: 7px; align-items: center;
-  }
-  .locker .cab > .rack-foot .rack-note { font-size: 9px; line-height: 1.25; }
-  .locker .cab > .rack-foot button { min-height: 38px; padding: 9px 14px; }
-
-  /* Mission report remains a clipboard, sized for a phone. */
-  .veil.report { place-items: center; }
-  .veil.report .panel {
-    box-sizing: border-box; max-width: none; max-height: calc(100dvh - 16px);
-    min-height: 0; overflow-y: auto; overscroll-behavior: contain;
-    padding: 37px 12px 12px; gap: 7px;
-  }
-  .veil.report .panel::before { width: 105px; height: 24px; }
-  .veil.report .panel::after { height: 10px; width: 20px; border-width: 3px; }
-  .veil.report h2 { font-size: 19px; padding-bottom: 7px; }
-  .veil.report #veilText { font-size: 10px; line-height: 1.3; padding-bottom: 6px; }
-  .veil.report #veilSum { grid-template-columns: minmax(90px,40%) minmax(0,1fr); gap: 4px 7px; }
-  .veil.report #veilSum dt { font-size: 9px; line-height: 1.2; }
-  .veil.report #veilSum dd { font-size: 10px; padding-bottom: 3px; }
-  .veil.report .equipment-loss { padding: 7px 0 3px; }
-  .veil.report .equipment-loss h3 { margin-bottom: 5px; font-size: 10px; }
-  .veil.report .loss-items { gap: 4px; }
-  .veil.report .loss-item { min-width: 0; padding: 4px; font-size: 10px; }
-  .veil.report .loss-item .ic { width: 26px; height: 20px; }
-  .veil.report .loss-item .ic svg { width: 25px; height: 18px; }
-  .veil.report .rack-foot { padding-top: 6px; gap: 5px; }
-  .veil.report .rack-foot button { padding: 8px 9px; font-size: 10px; }
-}
-/* Short landscape phones: keep information side by side to preserve vertical room. */
-@media (max-height: 520px) and (pointer: coarse) {
-  .veil.board .panel { max-height: calc(100dvh - 8px); }
-  .veil.board #levels { grid-template-columns: repeat(3,minmax(0,1fr)); }
-  .veil.board .kit .ic { height: 45px; }
-  .locker .cab-body { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
-  .locker .peg-row { height: 105px; }
-  .locker .hang svg { height: 69px; }
-  .locker .shelf { grid-template-columns: repeat(4,minmax(0,1fr)); }
-  .veil.report .panel { max-height: calc(100dvh - 8px); }
-}
 </style>
 
 <main class="stage" id="stage">
