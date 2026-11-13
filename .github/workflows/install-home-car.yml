@@ -39,6 +39,13 @@ jobs:
               }
               X.restore();"""
               s = s[:first] + replacement + s[last:]
+          # Version the asset URL so old images cannot be reused from cache.
+          s = s.replace("titleCarImage.src = 'assets/home-police-car.svg';", "titleCarImage.src = 'assets/home-police-car.svg?v=20261113b';")
+          if 'titleCarImage.src = \'assets/home-police-car.svg?v=20261113b\';' not in s:
+              raise RuntimeError('New car image reference was not installed')
+          # Fail the workflow rather than publish the previous car.
+          if 'the patrol car, side on, light bar alternating slowly' in s:
+              raise RuntimeError('Old car draw code still exists')
           if "X.drawImage(titleCarImage, -170, -140, 340, 140);" not in s:
               raise RuntimeError('Title car replacement not present: aborting safely')
           p.write_text(s, encoding='utf-8')
