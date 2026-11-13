@@ -39,15 +39,21 @@ jobs:
               }
               X.restore();"""
               s = s[:first] + replacement + s[last:]
-          # Version the asset URL so old images cannot be reused from cache.
-          s = s.replace("titleCarImage.src = 'assets/home-police-car.svg';", "titleCarImage.src = 'assets/home-police-car.svg?v=20261113b';")
-          if 'titleCarImage.src = \'assets/home-police-car.svg?v=20261113b\';' not in s:
-              raise RuntimeError('New car image reference was not installed')
-          # Fail the workflow rather than publish the previous car.
+          # Self-contained art: the game works both on GitHub Pages and as a local HTML file.
+          import base64
+          svg = Path('assets/home-police-car.svg').read_bytes()
+          uri = 'data:image/svg+xml;base64,' + base64.b64encode(svg).decode('ascii')
+          import re
+          s, count = re.subn(r"titleCarImage\\.src = 'assets/home-police-car\\.svg(?:\\?[^']*)?';",
+                             lambda _: "titleCarImage.src = '" + uri + "';", s)
+          if count == 0 and 'titleCarImage.src = \\'data:image/svg+xml;base64,' not in s:
+              raise RuntimeError('Car image source not found')
+          s = s.replace('X.drawImage(titleCarImage, -170, -140, 340, 140);',
+                        'X.drawImage(titleCarImage, -410, -230, 820, 338);')
+          if 'X.drawImage(titleCarImage, -410, -230, 820, 338);' not in s:
+              raise RuntimeError('Updated car drawing dimensions missing')
           if 'the patrol car, side on, light bar alternating slowly' in s:
-              raise RuntimeError('Old car draw code still exists')
-          if "X.drawImage(titleCarImage, -170, -140, 340, 140);" not in s:
-              raise RuntimeError('Title car replacement not present: aborting safely')
+              raise RuntimeError('Old car drawing still exists')
           p.write_text(s, encoding='utf-8')
           PY
       - name: Commit updated game
