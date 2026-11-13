@@ -1,0 +1,39 @@
+name: Apply mobile menu styles
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile-menus.css'
+      - '.github/workflows/apply-mobile-css.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Link mobile menu CSS in game page
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          page = Path("index.html")
+          html = page.read_text(encoding="utf-8")
+          marker = '<link rel="stylesheet" href="./mobile-menus.css">'
+          if marker not in html:
+              if '</head>' not in html:
+                  raise RuntimeError("HTML head missing; refusing to edit")
+              html = html.replace('</head>', marker + '</head>', 1)
+              page.write_text(html, encoding="utf-8")
+          PY
+      - name: Commit HTML link if needed
+        run: |
+          if ! git diff --quiet -- index.html; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html
+            git commit -m "Load mobile-only menu stylesheet"
+            git push
+          fi
