@@ -45,7 +45,7 @@ jobs:
           uri = 'data:image/svg+xml;base64,' + base64.b64encode(svg).decode('ascii')
           # Refresh either a prior embedded image or the original asset URL.
           import re
-          pattern = r"titleCarImage\\.src = '(?:data:image/svg\\+xml;base64,[^']+|assets/home-police-car\\.svg(?:\\?[^']*)?)';"
+          pattern = r"titleCarImage\.src = '(?:data:image/svg\+xml;base64,[^']+|assets/home-police-car\.svg(?:\?[^']*)?)';"
           s, count = re.subn(pattern, lambda m: "titleCarImage.src = '" + uri + "';", s, count=1)
           if count != 1:
               raise RuntimeError('Expected exactly one title car image reference')
