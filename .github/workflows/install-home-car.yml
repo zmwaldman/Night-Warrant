@@ -43,10 +43,10 @@ jobs:
           import base64
           svg = Path('assets/home-police-car.svg').read_bytes()
           uri = 'data:image/svg+xml;base64,' + base64.b64encode(svg).decode('ascii')
-          import re
-          s, count = re.subn(r"titleCarImage\\.src = 'assets/home-police-car\\.svg(?:\\?[^']*)?';",
-                             lambda _: "titleCarImage.src = '" + uri + "';", s)
-          if count == 0 and 'titleCarImage.src = \\'data:image/svg+xml;base64,' not in s:
+          old = "titleCarImage.src = 'assets/home-police-car.svg?v=20261113b';"
+          if old in s:
+              s = s.replace(old, "titleCarImage.src = '" + uri + "';")
+          elif "titleCarImage.src = 'data:image/svg+xml;base64," not in s:
               raise RuntimeError('Car image source not found')
           s = s.replace('X.drawImage(titleCarImage, -170, -140, 340, 140);',
                         'X.drawImage(titleCarImage, -410, -230, 820, 338);')
