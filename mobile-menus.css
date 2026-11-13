@@ -2,42 +2,42 @@
 @media (max-width:700px) and (pointer:coarse) {
   /* Keep the cabinet a constant size when switching from pistol to long guns.
      The content area, not the whole cabinet, scrolls when attachments grow. */
-  .locker { box-sizing:border-box; padding:6px; overflow:hidden; place-items:center; }
+  .locker { box-sizing:border-box !important; padding:6px !important; overflow:hidden !important; place-items:center !important; }
   .locker .cab {
-    box-sizing:border-box;
-    width:100%;
-    height:calc(100dvh - 12px);
-    max-height:calc(100dvh - 12px);
-    min-height:0;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
+    box-sizing:border-box !important;
+    width:100% !important;
+    height:calc(100dvh - 12px) !important;
+    max-height:calc(100dvh - 12px) !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
   }
-  .locker .cab > .rack-head, .locker .cab > .rack-foot { flex:0 0 auto; }
+  .locker .cab > .rack-head, .locker .cab > .rack-foot { flex:0 0 auto !important; }
   .locker .cab-body {
-    flex:1 1 auto;
-    min-height:0;
-    overflow-y:auto;
-    overscroll-behavior:contain;
-    align-content:start;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    align-content:start !important;
   }
-  .locker .cab-door { min-height:0; }
+  .locker .cab-door { min-height:0 !important; }
   /* Slightly reduce the overall operations sheet footprint; preserve
      normal internal card and icon sizes rather than shrinking each icon. */
-  .veil.board { box-sizing:border-box; padding:10px; place-items:center; overflow:hidden; }
+  .veil.board { box-sizing:border-box !important; padding:10px !important; place-items:center !important; overflow:hidden !important; }
   .veil.board .panel {
-    box-sizing:border-box;
-    width:94%;
-    max-width:94%;
-    max-height:calc(100dvh - 20px);
-    min-height:0;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
+    box-sizing:border-box !important;
+    width:94% !important;
+    max-width:94% !important;
+    max-height:calc(100dvh - 20px) !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
   }
-  .veil.board #levels { min-height:0; overflow-y:auto; overscroll-behavior:contain; }
+  .veil.board #levels { min-height:0 !important; overflow-y:auto !important; overscroll-behavior:contain !important; }
 }
 @media (max-height:520px) and (pointer:coarse) {
-  .locker .cab { height:calc(100dvh - 8px); max-height:calc(100dvh - 8px); }
-  .veil.board .panel { max-height:calc(100dvh - 12px); }
+  .locker .cab { height:calc(100dvh - 8px) !important; max-height:calc(100dvh - 8px) !important; }
+  .veil.board .panel { max-height:calc(100dvh - 12px) !important; }
 }
