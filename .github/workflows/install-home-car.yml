@@ -43,11 +43,12 @@ jobs:
           import base64
           svg = Path('assets/home-police-car.svg').read_bytes()
           uri = 'data:image/svg+xml;base64,' + base64.b64encode(svg).decode('ascii')
-          old = "titleCarImage.src = 'assets/home-police-car.svg?v=20261113b';"
-          if old in s:
-              s = s.replace(old, "titleCarImage.src = '" + uri + "';")
-          elif "titleCarImage.src = 'data:image/svg+xml;base64," not in s:
-              raise RuntimeError('Car image source not found')
+          # Refresh either a prior embedded image or the original asset URL.
+          import re
+          pattern = r"titleCarImage\\.src = '(?:data:image/svg\\+xml;base64,[^']+|assets/home-police-car\\.svg(?:\\?[^']*)?)';"
+          s, count = re.subn(pattern, lambda m: "titleCarImage.src = '" + uri + "';", s, count=1)
+          if count != 1:
+              raise RuntimeError('Expected exactly one title car image reference')
           s = s.replace('X.drawImage(titleCarImage, -170, -140, 340, 140);',
                         'X.drawImage(titleCarImage, -410, -230, 820, 338);')
           if 'X.drawImage(titleCarImage, -410, -230, 820, 338);' not in s:
