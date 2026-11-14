@@ -22,7 +22,7 @@
   }
   .veil.board, .locker, .veil.report { padding: 6px; }
 }
-</style><link rel="stylesheet" href="./mobile-menus.css"></head><body>
+</style></head><body>
 <title>Night Warrant</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <!-- Offline-safe: system fonts avoid a render-blocking network dependency in mobile file viewers. -->
@@ -174,6 +174,33 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 }
 .title nav button:hover:not(:disabled) { border-color: var(--frost); color: var(--frost); }
 .title nav button small { font: 400 10px/1 var(--mono); letter-spacing: .1em; color: var(--steel); text-transform: none; }
+
+/* Mobile title screen: preserve both entry buttons and the title on short iPhone viewports.
+   No desktop, operation-board, or van-store layout changes. */
+@media (pointer: coarse) and (max-width: 1000px) {
+  #title.title {
+    box-sizing: border-box;
+    max-width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding-top: max(10px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    gap: clamp(6px, 2.3dvh, 14px);
+    overflow: hidden;
+  }
+  #title.title h2 { font-size: clamp(28px, min(9vw, 15dvh), 68px); line-height: 1.03; }
+  #title.title nav { width: min(100%, 300px); flex: 0 0 auto; gap: 7px; }
+  #title.title nav button { min-height: 42px; box-sizing: border-box; }
+}
+@media (pointer: coarse) and (max-height: 430px) {
+  #title.title { gap: 6px; padding-top: 8px; padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
+  #title.title h2 { font-size: clamp(26px, 6.5vh, 42px); }
+  #title.title p { font-size: 9px; }
+  #title.title nav button { padding: 9px 12px; min-height: 38px; }
+}
+
 .strip.quiet .stats, .strip.quiet .btns { visibility: hidden; }
 [hidden] { display: none !important; }
 /* Operations: a case board. Grey felt, photographs pinned up, a note stuck to each, twine from pin to pin. */
@@ -416,6 +443,87 @@ body { display: block; background: var(--night); }
 .mobile-controls .mobile-pause { top:12px; right:82px; }
 .mobile-controls .mobile-hint { position:absolute; pointer-events:none; bottom:18px; left:17px; color:#c9c4b6a8; font:600 10px/1.5 var(--mono); text-shadow:0 2px 3px #000; }
 @media (max-width:640px) { .mobile-controls button { min-height:40px; min-width:44px; font-size:9px; } .mobile-controls .mobile-fire { width:82px;height:82px;bottom:14px;right:12px;font-size:13px; } .mobile-controls .mobile-reload { bottom:111px;right:12px; } .mobile-controls .mobile-use { bottom:164px;right:12px; } .mobile-controls .mobile-cover { bottom:123px;right:81px; } .mobile-controls .mobile-swap { bottom:66px;right:103px; } .mobile-controls .mobile-melee { bottom:12px;right:106px; } .mobile-controls .mobile-grenade { bottom:173px;right:84px; } .mobile-controls .mobile-hint { bottom:8px;left:10px;font-size:8px; } }
+
+
+/* Van store: the same dark locker cabinet, rather than the old bottom drawer. */
+.rack.van-locker {
+  inset:0; left:0; right:0; bottom:0; max-height:none;
+  z-index:5; display:grid; place-items:center; align-content:center;
+  padding:14px; overflow:auto; overscroll-behavior:contain;
+  background:rgba(6,8,10,.88); border:0; box-shadow:none;
+}
+.rack.van-locker[hidden] {display:none!important}
+.rack.van-locker > .rack-head,
+.rack.van-locker > .cab-body,
+.rack.van-locker > .rack-foot {
+  width:min(900px,100%); box-sizing:border-box;
+  background:#181d22; border-left:1px solid #3a434c; border-right:1px solid #3a434c;
+}
+.rack.van-locker > .rack-head {padding:14px 14px 5px; border-top:1.5px solid #a3adb7; border-bottom:0}
+.rack.van-locker > .cab-body {padding:9px 14px; background:linear-gradient(#1b1f24,#121519); min-height:0}
+.rack.van-locker > .rack-foot {padding:6px 14px 14px; border-bottom:1px solid #3a434c}
+.rack.van-locker .van-peg {justify-content:flex-start; padding:10px; min-width:0; min-height:0; overflow-y:auto; overflow-x:hidden}
+.rack.van-locker .rack-items {grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
+.rack.van-locker .rack-items .kit {min-height:104px; height:auto; box-sizing:border-box; align-content:start; grid-auto-rows:min-content; padding-bottom:12px; background:rgba(0,0,0,.22)}
+.rack.van-locker .rack-items .kit .ic {height:27px}
+.rack.van-locker .rack-items .kit .ic svg {height:25px}
+/* Prevent the issued pistol artwork and text from overflowing narrow van-store tiles. */
+.rack.van-locker .rack-items .kit {grid-template-columns:minmax(0,1fr); min-width:0; overflow:hidden; justify-items:start;}
+.rack.van-locker .rack-items .kit .ic {grid-column:1; width:100%; max-width:100%; min-width:0; overflow:hidden; justify-content:flex-start;}
+.rack.van-locker .rack-items .kit .ic svg {display:block; width:min(110px,100%); max-width:100%; height:100%; object-fit:contain;}
+.rack.van-locker .rack-items .kit .nm, .rack.van-locker .rack-items .kit .ct,
+.rack.van-locker .rack-items .kit .ds {grid-column:1; min-width:0; max-width:100%; overflow-wrap:anywhere;}
+.rack.van-locker .rack-items .kit .nm {line-height:1.35; padding-top:2px;}
+.rack.van-locker .rack-items .kit .ct {line-height:1.3;}
+/* The issued pistol is a summary tile, not a purchasable item. Its old
+   description ran beyond the usable card area. Keep the full text in the
+   equipment details, with icon, title and status contained in the tile. */
+.rack.van-locker .rack-items .van-pistol {
+  display:flex; flex-direction:column; align-items:flex-start;
+  justify-content:center; gap:6px; padding:10px 12px;
+  min-height:96px; height:auto; overflow:visible;
+}
+.rack.van-locker .rack-items .van-pistol .ic {
+  flex:none; display:flex; align-items:center; width:100%;
+  height:32px; overflow:visible;
+}
+.rack.van-locker .rack-items .van-pistol .ic svg {width:110px;max-width:100%;height:32px}
+.rack.van-locker .rack-items .van-pistol .ic.gun-locker {height:auto; min-height:40px; align-items:flex-end;}
+.rack.van-locker .rack-items .van-pistol .ic.gun-locker svg {display:block; width:120px; max-width:100%; height:auto; max-height:40px; color:#aeb7c0; filter: drop-shadow(4px 5px 3px rgba(0, 0, 0, .7));}
+.rack.van-locker .rack-items .van-pistol .nm,
+.rack.van-locker .rack-items .van-pistol .ct {display:block;line-height:1.3;white-space:normal}
+@media (max-width:640px) {
+ .rack.van-locker .rack-items .van-pistol {min-height:75px;padding:7px 8px;gap:3px}
+ .rack.van-locker .rack-items .van-pistol .ic,
+ .rack.van-locker .rack-items .van-pistol .ic svg {height:23px}
+}
+.rack.van-locker .rack-items .kit[aria-pressed=true] {border-color:#e6eaed}
+.rack.van-locker .van-door {justify-content:flex-start}
+.rack.van-locker .van-door .lk-art {min-height:100px}
+.rack.van-locker .van-door .lk-art .ic {display:flex;justify-content:center}
+.rack.van-locker .van-door .lk-art svg {width:85%; height:85px;max-width:250px}
+.rack.van-locker .van-door .van-purchase {width:100%;margin-top:6px;padding:12px;font-size:11px}
+.rack.van-locker .tabs {flex:0}
+.rack.van-locker .van-door .lk-stats {margin:6px 0}
+@media (pointer:coarse) and (max-width:1000px) {
+  .rack.van-locker {padding:8px;align-content:start}
+  .rack.van-locker > .rack-head,.rack.van-locker > .cab-body,.rack.van-locker > .rack-foot {width:min(900px,100%)}
+}
+@media (max-width:640px) {
+ .rack.van-locker {padding:6px;align-content:start;gap:0}
+ .rack.van-locker > .rack-head {padding:8px;gap:5px}
+ .rack.van-locker > .cab-body {grid-template-columns:minmax(0,1fr);gap:5px;padding:5px 8px}
+ .rack.van-locker .van-peg {padding:5px;max-height:41dvh}
+ .rack.van-locker .rack-items .kit {min-height:76px;padding:7px 5px 10px;gap:3px}
+ .rack.van-locker .rack-items .kit .ic {height:20px}
+ .rack.van-locker .rack-items .kit .ic svg {height:19px}
+ .rack.van-locker .rack-items .kit .ds {display:none}
+ .rack.van-locker .van-door {padding:8px;gap:5px}
+ .rack.van-locker .van-door .lk-art {display:none}
+ .rack.van-locker .van-door .lk-stats {gap:1px 7px}
+ .rack.van-locker > .rack-foot {padding:6px 8px}
+ .rack.van-locker .rack-note {font-size:9px}
+}
 </style>
 
 <main class="stage" id="stage">
@@ -516,7 +624,7 @@ body { display: block; background: var(--night); }
       <div class="rack-foot"><span class="rack-note" id="lockNote"></span><button type="button" class="issue" id="lockBack">Back</button></div>
     </div>
   </section>
-  <section class="rack" id="rack" hidden aria-label="Equipment">
+  <section class="rack van-locker" id="rack" hidden aria-label="Equipment">
     <div class="rack-head">
       <span class="rack-title">Unit 14 / Equipment</span>
       <div class="tabs">
@@ -525,16 +633,39 @@ body { display: block; background: var(--night); }
       </div>
       <span class="rack-pts" id="rackPts"></span>
     </div>
-    <div class="rack-items" id="rackItems"></div>
+    <div class="cab-body van-body">
+      <div class="peg van-peg"><div class="rack-items" id="rackItems"></div></div>
+      <div class="cab-door van-door" id="vanDetails"></div>
+    </div>
     <div class="rack-foot">
       <span class="rack-note" id="rackNote"></span>
       <button type="button" class="issue" id="rackExtract" hidden>Extract</button>
       <button type="button" id="rackCancel">Close</button>
-      <button type="button" class="issue" id="rackOk">Requisition</button>
     </div>
   </section>
 </main>
 
+<script>
+// Display a useful error if the game's main JavaScript fails during startup.
+(function () {
+  var started = false;
+  function failure(message) {
+    if (started || document.getElementById('nw-startup-error')) return;
+    var title = document.getElementById('title');
+    if (!title) return;
+    var el = document.createElement('p');
+    el.id = 'nw-startup-error';
+    el.style.cssText = 'position:absolute;left:16px;right:16px;top:16px;z-index:12;padding:12px;background:#471d20;color:#fff;border:1px solid #b85b5b;font:12px/1.5 monospace;letter-spacing:0;text-transform:none;max-width:650px';
+    el.textContent = 'Night Warrant did not initialize. ' + message + ' Reload the game page; if this persists, use the standalone HTML file.';
+    title.appendChild(el);
+  }
+  window.addEventListener('error', function (ev) { failure(ev.message || 'JavaScript error.'); });
+  window.addEventListener('unhandledrejection', function (ev) { failure(String(ev.reason || 'Initialization error.')); });
+  window.addEventListener('load', function () { setTimeout(function () {
+    if (document.documentElement.dataset.nightWarrantStarted !== '1') failure('The startup script was interrupted or blocked.');
+  }, 3500); });
+})();
+</script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
@@ -1181,7 +1312,7 @@ body { display: block; background: var(--night); }
       shuffled(out.posts.filter(p => p[0] === f)).slice(0, n).forEach((p, i) => suspects.push([f, p[1], p[2], bag[i % bag.length]]));
     }
     return {
-      time, concrete, cash, grids, down: out.down || null, spots: ladderSpots(a, b), rugs: out.rugs, tvs: out.tvs, suspects,
+      time, concrete, cash, grids, down: out.down || null, spots: ladderSpots(a, b), rugs: out.rugs, tvs: out.tvs, suspects, halloranFinishes:out.finishes||null, halloranProps:out.props||[], halloranCars:out.cars||[], halloranPark:out.parkSide||null,
       evidence: { floor: 1, x: 5.5 * T, y: 8.5 * T, taken: false }, van: { x: 13 * T, y: 19 * T, w: 4 * T, h: 2 * T },
     };
   }
@@ -1195,26 +1326,39 @@ body { display: block; background: var(--night); }
     out.posts.push([f, x0 + 1 + rnd(span - 1), 6 + rnd(4)], [f, x0 + 1 + rnd(span - 1), pickOne([5, 9])]);
   }
 
-  // ----- Halloran Street: flats off a hallway spine -----
+  // ----- Halloran Street: visible neighbourhood edition / flats off a hallway spine -----
   // One flat. dir is +1 when the flat is above the hallway and -1 when below; the far wall is the outside wall.
   // The row beside the hallway wall and the row beside the far wall always stay clear, so every flat can be walked through.
   function flat(m, f, x0, x1, y0, y1, wallY, dir, out, k, force) {
-    const kind = force || pickOne(['bed', 'bed', 'kitchen', 'lounge', 'lounge', 'storage', 'studio', 'office', 'dining', 'laundry'].concat(f === 0 ? ['boiler'] : []));
+    const kind = force || pickOne(['bed', 'bed', 'master', 'kids', 'kitchen', 'galley', 'lounge', 'lounge', 'livingDining', 'storage', 'hoarder', 'studio', 'student', 'office', 'dining', 'laundry', 'bath', 'vacant'].concat(f === 0 ? ['boiler', 'maintenance'] : []));
     const open = kind === 'alcove';                                               // an alcove has no wall to the hallway at all
-    k.rect(m, x0, y0, x1, y1, open ? ':' : kind === 'yard' ? ',' : kind === 'kitchen' || kind === 'laundry' || kind === 'boiler' ? ';' : '.');
+    k.rect(m, x0, y0, x1, y1, open ? ':' : kind === 'yard' ? ',' : ['kitchen', 'galley', 'laundry', 'boiler', 'bath', 'maintenance'].includes(kind) ? ';' : '.');
+    // Room-specific floor finish; styling is metadata, not new collision tiles.
+    const finish = ({master:'plank',kids:pickOne(['carpet-plum','carpet-green','carpet-navy']),student:pickOne(['carpet-plum','carpet-green','carpet-navy']),bed:'plank',lounge:'plank',livingDining:'plank',office:pickOne(['carpet-plum','carpet-green','carpet-navy']),hoarder:'concrete',vacant:'concrete',studio:'vinyl',dining:'vinyl',galley:'checker',bath:'bath',laundry:'vinyl',kitchen:'checker',maintenance:'concrete',boiler:'concrete'})[kind];
+    if (finish && out.finishes && f < 2) for (let yy=y0; yy<=y1; yy++) for (let xx=x0; xx<=x1; xx++) out.finishes[f][yy][xx] = finish;
+    const prop = (xx,yy,type) => { if (out.props && f < 2) out.props.push([f,xx,yy,type]); };
     const w = x1 - x0 + 1, farY = dir > 0 ? y0 : y1, nearY = dir > 0 ? y1 : y0, midY = farY + 2 * dir, cx = x0 + Math.floor(w / 2);
     let doorX = x0 + 1 + rnd(w - 2);
     if (open) { k.rect(m, x0 + 1, wallY, x1 - 1, wallY, ':'); doorX = cx; } else m[wallY][doorX] = 'D';
     const run = (ch, n, from) => { for (let i = 0; i < n && from + i <= x1; i++) m[farY][from + i] = ch; };
     const rug = ci => out.rugs[f].push([x0 + 1, dir > 0 ? y0 + 1 : y1 - 2, Math.min(4, w - 2), 2, ci]);
     switch (kind) {
-      case 'bed': run('b', 2, x0); m[farY][x1] = 'p'; m[midY][x1] = 't'; rug(1); break;
+      case 'bed': run('b', 2, x0); m[farY][x1] = 'p'; m[midY][x1] = 't'; prop(x1,midY,'nightstand'); rug(1); break;
+      case 'master': run('b', 3, x0); m[farY][x1]='x'; prop(x1,farY,'wardrobe'); m[midY][x1]='t'; prop(x1,midY,'dresser'); rug(1); break;
+      case 'kids': run('b',2,x0); m[farY][x1]='x'; prop(x1,farY,'toys'); m[midY][x1]='t'; prop(x1,midY,'desk'); rug(2); break;
+      case 'student': run('b',2,x0); m[farY][x1]='x'; prop(x1,farY,'bookshelf'); m[midY][x1]='t'; prop(x1,midY,'desk'); rug(0); break;
+      case 'bath': run('b',2,x0); prop(x0,farY,'bathtub'); prop(x0+1,farY,'bathtub'); m[farY][x1]='k'; prop(x1,farY,'sink'); m[midY][x1]='t'; prop(x1,midY,'toilet'); break;
+      case 'galley': run('k',Math.min(3,w-2),x0); m[farY][x1]='f'; m[midY][x0]='k'; prop(x0,midY,'sink'); m[midY][x1]='k'; prop(x1,midY,'stove'); break;
+      case 'livingDining': run('c',Math.min(3,w-2),x0); m[farY][x1]='v'; out.tvs[f].push([x1,farY]); m[midY][cx]='t'; m[midY][cx+1]='t'; rug(2); break;
+      case 'hoarder': run('x',Math.min(3,w-2),x0); m[farY][x1]='x'; prop(x1,farY,'bookshelf'); m[midY][x0]='x'; m[midY][x1]='c'; break;
+      case 'vacant': m[farY][x0]='x'; m[farY][x1]='t'; prop(x1,farY,'broken'); break;
+      case 'maintenance': run('A',2,x0+1); m[farY][x1]='x'; m[midY][x1]='k'; prop(x1,midY,'tools'); break;
       case 'kitchen': run('k', Math.min(3, w - 2), x0); m[farY][x1] = 'f'; m[midY][cx] = 't'; if (w >= 7) m[midY][cx + 1] = 't'; break;
       case 'lounge': run('c', Math.min(3, w - 2), cx - 1); m[farY][x1] = 'p'; m[midY][cx] = 't'; m[midY][x0] = 'v'; out.tvs[f].push([x0, midY]); rug(0); break;
       case 'storage': run('x', Math.min(4, w - 1), x0); m[midY][x1] = 'x'; m[midY + dir][x1] = 'x'; if (w >= 6) m[midY][cx] = 'x'; break;
       case 'office': run('t', Math.min(3, w - 2), x0); m[farY][x1] = 'f'; m[midY][x1] = 'c'; m[midY][cx] = 't'; rug(1); break;
       case 'dining': run('k', 2, x1 - 1); m[farY][x0] = 'p'; m[midY][cx - 1] = 't'; m[midY][cx] = 't'; if (w >= 7) m[midY][cx + 1] = 't'; rug(2); break;
-      case 'laundry': run('k', Math.min(4, w - 1), x0); m[farY][x1] = 'f'; m[midY][x1] = 'x'; break;
+      case 'laundry': run('k', Math.min(4, w - 1), x0); m[farY][x1] = 'f'; m[midY][x1] = 'x'; prop(x0,farY,'washer'); if(w>6) prop(x0+1,farY,'dryer'); break;
       case 'boiler': run('A', 2, x0 + 1); m[farY][x1] = 'e'; m[midY][x1] = 'x'; m[midY][x0] = 'e'; break;                    // plant room: boilers and ducting
       case 'yard': m[farY][x0] = 'p'; m[farY][x1] = 'p'; m[midY][x0] = 'c'; m[midY + dir][x0] = 'c'; m[midY][x1] = 'd'; break;   // a small entry court: planters, a bench, the bins
       case 'alcove': run('c', w - 2, x0 + 1); m[farY][x0] = 'p'; m[farY][x1] = 'p'; m[midY][cx] = 't'; m[midY][x0] = 'f'; rug(0); break;   // seats, a table, a vending machine
@@ -1256,6 +1400,10 @@ body { display: block; background: var(--night); }
     }
     const strips = top.map(s => [s[0], s[1], 1, 5, 6, 1]).concat(bottom.map(s => [s[0], s[1], 10, 15, 9, -1]));
     let yard = f === 0 && Math.random() < 0.5;                                     // at most one entry court, on the street side
+    // Make every Halloran run visibly different: these featured interiors appear every run.
+    // Pick the featured set per floor, then distribute them through the ordinary safe flat slots.
+    const featured = shuffled(f === 0 ? ['bath','livingDining','kids','galley'] : ['master','student','bath','hoarder']);
+    let featuredAt = 0;
     for (const [sx0, sx1, y0, y1, wallY, dir] of strips) {
       let x = sx0, prev = null, alcove = Math.random() < (f === 1 ? 0.75 : 0.4);    // at most one open alcove per stretch, more often upstairs
       while (x <= sx1) {
@@ -1263,7 +1411,8 @@ body { display: block; background: var(--night); }
         if (sx1 - x - w < 5) w = sx1 - x + 1;                                     // the last one takes what is left
         const asAlcove = alcove && prev && w >= 6 && Math.random() < 0.5;
         const asYard = !asAlcove && yard && dir < 0 && w >= 6 && Math.random() < 0.5;
-        const r = flat(m, f, x, x + w - 1, y0, y1, wallY, dir, out, k, asAlcove ? 'alcove' : asYard ? 'yard' : null);
+        const featuredKind = !asAlcove && !asYard && featuredAt < featured.length ? featured[featuredAt++] : null;
+        const r = flat(m, f, x, x + w - 1, y0, y1, wallY, dir, out, k, asAlcove ? 'alcove' : asYard ? 'yard' : featuredKind);
         if (asAlcove) alcove = false;
         if (asYard) yard = false;
         if (r.open) for (let xx = r.x0; xx <= r.x1; xx++) keep.add(xx + ',' + (dir > 0 ? 7 : 8));
@@ -1299,12 +1448,51 @@ body { display: block; background: var(--night); }
     }
     out.posts.push([f, hx0 + 4 + rnd(Math.max(1, 26 - hx0)), 7 + rnd(2)]);
   }
+  function halloranOutside(a, out, frontDoor) {
+    // Painted curbside parking on both sides of the building entrance; three distinct cars
+    // are guaranteed and do not intersect the player's van or entrance walkway.
+    const lots = shuffled([3,7,27,31]).filter(x => Math.abs(x-frontDoor)>3 && x<12 || x>23 && Math.abs(x-frontDoor)>3);
+    for (const x of lots.slice(0, 3)) {
+      const y = 21;
+      if ([0,1,2].every(dx => [0,1].every(dy => a[y+dy][x+dx] === '='))) {
+        for (let dy=0;dy<2;dy++) for(let dx=0;dx<3;dx++) a[y+dy][x+dx]='B';
+        out.cars.push([x,y,pickOne(['burgundy','slate','silver','navy'])]);
+      }
+    }
+    // Two distinct landscaping zones: walkable front sidewalk planters and side pocket parks.
+    out.parkSide = pickOne(['west','east','both']);
+    const sides = out.parkSide === 'both' ? [0,36] : [out.parkSide==='west'?0:36];
+    for (const sx of sides) for (let y=1;y<16;y++) {
+      if (a[y][sx] === ',' && y!==7) a[y][sx] = 'g';
+    }
+    // Benches use existing low-cover tiles in places where no doors or mission route pass.
+    for (const [x,y] of [[4,18],[32,18]]) if(a[y][x]===',' && Math.abs(frontDoor-x)>5) a[y][x]='t';
+  }
+  function halloranSpurs(m, out) {
+    if(Math.random() > .7) return;
+    // Only extend a known corridor, never cut off the east stairwell or lobby.
+    const cands=[];
+    for(let x=7;x<=29;x++) if(m[2][x] === ':' && m[5][x] === ':' && m[7][x] === ':') cands.push(x);
+    if(!cands.length) return;
+    const cx=pickOne(cands), right=Math.random()<.5, dx=right?1:-1;
+    const len=3+rnd(3), cy=3;
+    for(let n=1;n<=len;n++) {
+      const x=cx+dx*n;
+      if(x<4||x>33) break;
+      // A short dogleg landing from the vertical corridor; no furniture may narrow it.
+      if(n===1) m[cy][x]='D';
+      else if(!'HJR'.includes(m[cy][x])) m[cy][x]=':';
+    }
+    // Mark intersecting flats as linked so the locked objective is never placed in a side spur.
+    for(const room of out.rooms) if(room.x0<=cx+dx*len && room.x1>=cx+dx*len && room.y0<=cy && room.y1>=cy) room.linked=true;
+  }
   function buildApartments(tier) {
     const k = tools(), a = k.blank(','), b = k.blank(' ');
     // the front door and its lobby can be in the middle or toward either end, narrow or wide
     const lobby = pickOne([[18, 19], [17, 20], [9, 10], [9, 12], [26, 27], [25, 28]]), doorX = lobby[1] - lobby[0] > 1 ? lobby[0] + 1 : lobby[0];
     street(a, k, doorX); k.rect(b, 2, 0, 35, 16, '#');
-    const out = { rugs: [[], []], tvs: [[], []], rooms: [], posts: [[0, 1, 13]], cellar: ['storage', 'storage', 'laundry', 'boiler'] };
+    const out = { rugs: [[], []], tvs: [[], []], rooms: [], posts: [[0, 1, 13]], cellar: ['storage', 'storage', 'laundry', 'boiler'],
+      finishes: [Array.from({length:MH},()=>Array(MW).fill('')),Array.from({length:MH},()=>Array(MW).fill(''))], props: [], cars: [] };
     // on the ground floor the lobby sometimes carries straight on north across the hallway
     flats(a, 0, tier, out, k, { lobby, cross: Math.random() < 0.45 ? [doorX, doorX + 1] : null });
     const upCross = least => { const c = pickOne([[9, 10], [18, 19], [26, 27]]); return Math.random() < 0.4 && c[0] >= least ? c : null; };
@@ -1314,6 +1502,12 @@ body { display: block; background: var(--night); }
       roof(b, 1, 3, split - 1, out, k); b[7][split] = 'D';
       flats(b, 1, tier, out, k, { hx0: split + 1, cross: upCross(split + 7) });
     } else flats(b, 1, tier, out, k, { cross: upCross(9) });
+    // Outdoor modules: parking on one or both ends, pavement gardens and little pocket parks.
+    halloranOutside(a, out, doorX);
+    // Secondary corridors: T-junction and short dogleg fingers; keep the primary hall and stairs clear.
+    // Only add a side spur where a cross hallway exists, and keep previously placed room doors usable.
+    halloranSpurs(a, out);
+    halloranSpurs(b, out);
     // one ground-floor flat with no other way in is locked down, with the stash inside
     const v = pickOne(out.rooms.filter(r => r.f === 0 && !r.linked)) || out.rooms[0];
     a[v.wallY][v.doorX] = 'R';
@@ -1822,10 +2016,10 @@ body { display: block; background: var(--night); }
     return { cvs, x };
   }
   function onFloor(f, fn) {
-    const g0 = G, s0 = seen, x0 = X, fl = g.floors[f];
-    G = fl.grid; seen = fl.seen; X = fl.art.x;
+    const g0 = G, s0 = seen, x0 = X, oldPaintFloor = g.paintFloor, fl = g.floors[f];
+    G = fl.grid; seen = fl.seen; X = fl.art.x; g.paintFloor = f;
     fn(fl);
-    G = g0; seen = s0; X = x0;
+    G = g0; seen = s0; X = x0; g.paintFloor = oldPaintFloor;
   }
   function stamp(f, tx, ty) {
     if (tx < 0 || ty < 0 || tx >= MW || ty >= MH) return;
@@ -1838,9 +2032,12 @@ body { display: block; background: var(--night); }
   }
   function paintFloor(f) {
     onFloor(f, () => {
+      // Global draw order: floor/background -> area rugs -> props/assets.
+      // Furniture and debris must never choose or replace the floor finish.
       for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) ground(x, y);
       decor(f);
       for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) thing(x, y);
+      if (g.halloran) halloranDetails(f);
     });
   }
   // repaint one tile after it changes (a door opens, a window breaks)
@@ -1848,7 +2045,13 @@ body { display: block; background: var(--night); }
     onFloor(f, () => {
       X.save(); X.beginPath(); X.rect(tx * T, ty * T, T, T); X.clip();
       X.clearRect(tx * T, ty * T, T, T);
-      ground(tx, ty); thing(tx, ty);
+      // Match the full paint order: rugs and floor decorations are a separate
+      // layer from tile ground. Restore them before drawing surviving props,
+      // otherwise breaking a crate leaves a square hole in the room rug.
+      ground(tx, ty);
+      decor(f);
+      thing(tx, ty);
+      if (g.halloran) halloranDetails(f);
       X.restore();
     });
     stamp(f, tx, ty);
@@ -1960,6 +2163,63 @@ body { display: block; background: var(--night); }
         X.fillRect(px + Math.floor(hash(x, y * 4 + j, 6) * 30) + 2, py + j * 9, 1, 9);
       }
     }
+    const halloranStyleMap = g.halloran && g.halloranFinishes ? g.halloranFinishes[g.paintFloor ?? g.floor] : null;
+    const halloranInteriorBase = halloranStyleMap && !' #,=Vmdghs'.includes(ch) && !'DOURWwLG'.includes(ch);
+    if (halloranInteriorBase) {
+      const style = halloranStyleMap[y][x];
+      if (style === 'carpet-plum' || style === 'carpet-green' || style === 'carpet-navy') {
+        const carpetPal = style === 'carpet-green'
+          ? [['#3f5943','#435f47','#49684d'],'rgba(204,225,206,.11)','rgba(20,34,24,.14)']
+          : style === 'carpet-navy'
+            ? [['#3f4a67','#3a4560','#46516f'],'rgba(212,220,236,.10)','rgba(19,24,36,.16)']
+            : [['#625464','#605261','#655768'],'rgba(230,211,223,.12)','rgba(30,20,30,.14)'];
+        X.fillStyle = carpetPal[0][Math.floor(hash(x,y,83)*3)]; X.fillRect(px,py,T,T);
+        X.fillStyle = carpetPal[1]; for(let i=0;i<20;i++) X.fillRect(px+hash(x,y,84+i)*T,py+hash(x,y,97+i)*T,2,2);
+        X.fillStyle = carpetPal[2]; if(y%3===0) X.fillRect(px,py,T,1);
+      } else if (style === 'checker') {
+        // The floor finish belongs to the ROOM, not the object occupying a tile.
+        // The same checker pattern remains underneath crates, tables and debris.
+        for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) {
+          X.fillStyle = (i + j + x * 4 + y * 4) % 2 ? '#42474b' : '#393e42';
+          X.fillRect(px + i * 9, py + j * 9, 9, 9);
+        }
+      } else if (style === 'bath') {
+        X.fillStyle = '#4d5559'; X.fillRect(px,py,T,T);
+        X.fillStyle = '#3b4348';
+        X.fillRect(px,py,T,1); X.fillRect(px,py,1,T);
+        X.fillStyle = 'rgba(196,207,211,.11)';
+        X.fillRect(px+3,py+3,T-6,2);
+      } else if (style === 'vinyl') {
+        X.fillStyle=(x+y)%2?'#c0baa4':'#817d6c'; X.fillRect(px,py,T,T);
+        X.strokeStyle='rgba(25,28,27,.48)'; X.lineWidth=1; X.strokeRect(px+.5,py+.5,T-1,T-1);
+        X.fillStyle='rgba(255,255,255,.14)'; X.fillRect(px+3,py+3,T-6,2);
+      } else if (style === 'concrete') {
+        X.fillStyle='#565b5b'; X.fillRect(px,py,T,T);
+        X.fillStyle='#393f40'; if(x%3===0) X.fillRect(px,py,2,T); if(y%3===0) X.fillRect(px,py,T,2);
+        if(hash(x,y,24)<.23) { X.fillStyle='rgba(0,0,0,.17)'; X.fillRect(px+8,py+12,17,8); }
+      } else if (style === 'plank') {
+        X.fillStyle='#78634d';X.fillRect(px,py,T,T);
+        for(let i=0;i<3;i++) { X.fillStyle=i%2?'#6c5844':'#8e765a';X.fillRect(px,py+i*12,T,11);
+          X.fillStyle='#4b4036';X.fillRect(px+3+Math.floor(hash(x,y,i)*23),py+i*12,1,11); }
+      }
+    }
+    // Halloran: one continuous corridor-length runner, including under low props such as wire or crates.
+    // The two hallway rows form the width; the border follows the long outer edges.
+    const halloranHallCarpet = g.halloran && y>=7 && y<=8 && x>=3 && x<=34 && (ch === ':' || LOW.includes(ch) || ch === 'z');
+    if(halloranHallCarpet) {
+      const hallCarpetAt = (tx, ty) => ty>=7 && ty<=8 && tx>=3 && tx<=34 && (() => { const cc = tile(tx, ty); return cc === ':' || LOW.includes(cc) || cc === 'z'; })();
+      X.fillStyle='#474049'; X.fillRect(px,py,T,T);
+      X.fillStyle='#672f39'; X.fillRect(px,py,T,T);
+      // Fine longitudinal woven lines run along the entire hallway, without tile seams.
+      X.fillStyle='rgba(211,170,138,.10)';
+      for (const offset of [13, 25]) X.fillRect(px, py+offset, T, 2);
+      X.fillStyle='#a08b65';
+      if(y===7) { X.fillRect(px,py+4,T,2); X.fillRect(px,py+8,T,1); }
+      if(y===8) { X.fillRect(px,py+T-6,T,2); X.fillRect(px,py+T-9,T,1); }
+      // End caps only at the actual start/end of carpet, never between adjacent hallway-carpet tiles.
+      if(!hallCarpetAt(x-1,y)) X.fillRect(px+2,py,2,T);
+      if(!hallCarpetAt(x+1,y)) X.fillRect(px+T-4,py,2,T);
+    }
     // walls throw a soft shadow onto the floor beside them
     if (!'WwL'.includes(ch)) {
       if (WALLISH.includes(tile(x, y - 1))) { X.fillStyle = 'rgba(0,0,0,.28)'; X.fillRect(px, py, T, 5); X.fillStyle = 'rgba(0,0,0,.13)'; X.fillRect(px, py + 5, T, 5); }
@@ -1997,6 +2257,41 @@ body { display: block; background: var(--night); }
         X.beginPath(); X.ellipse(ux * T, uy * T, uw, uh, 0.2, 0, TAU); X.fill();
       }
     }
+    if (g.halloran && f===0) {
+      // Curbside parking stalls have long white lines and a curb; visually distinct from the dark road.
+      X.fillStyle='#3c4145'; X.fillRect(0,20*T,12*T,3*T); X.fillRect(24*T,20*T,14*T,3*T);
+      X.fillStyle='#c5c4af'; X.fillRect(0,20*T,12*T,2);X.fillRect(24*T,20*T,14*T,2);
+      X.strokeStyle='#d8d7bb'; X.lineWidth=3;
+      for(const x of [2,6,10,26,30,34,37]) {X.beginPath();X.moveTo(x*T,20.25*T);X.lineTo(x*T,22.8*T);X.stroke();}
+      // A tactile brick sidewalk outside the front-facing apartments, with landscape pockets.
+      for(let y=17;y<=18;y++) for(let x=0;x<38;x++){
+        if(x>=g.doorX-1 && x<=g.doorX+2) continue;
+        const px=x*T,py=y*T;
+        if(G[y][x]!==',' && G[y][x]!=='g') continue;
+        X.fillStyle=(x+y)%2?'#70665a':'#655d54';X.fillRect(px,py,T,T);
+        X.fillStyle='rgba(33,33,33,.27)';X.fillRect(px,py,T,1);X.fillRect(px+(y%2)*18,py,1,T);
+      }
+      // Front planting islands and tree wells; decorative only, never block walking.
+      for(const [cx,cy] of [[3.5,17.6],[7.5,17.6],[30.5,17.6],[34.5,17.6]]){
+        if(Math.abs(cx-g.doorX)<4) continue;
+        X.save();X.translate(cx*T,cy*T);
+        X.fillStyle='#444b3a';X.fillRect(-18,-15,36,30);
+        X.strokeStyle='#b6aa8d';X.lineWidth=2;X.strokeRect(-18,-15,36,30);
+        X.fillStyle='#26392c'; X.beginPath();X.arc(0,0,13,0,TAU);X.fill();
+        X.fillStyle='#57724e';for(const [dx,dy,r] of [[-7,-5,9],[7,-2,9],[0,6,10]]){X.beginPath();X.arc(dx,dy,r,0,TAU);X.fill();}
+        X.restore();
+      }
+      // Pocket parks on the exposed west/east sides of the building.
+      const sides=g.halloranPark==='both'?[0,36]:[g.halloranPark==='west'?0:36];
+      for(const sx of sides) for(let y=1;y<=15;y++){
+        if(sx===0 && y===7)continue;
+        if(!',gp'.includes(G[y][sx]))continue;
+        const px=sx*T,py=y*T;
+        X.fillStyle='#415a3b';X.fillRect(px+1,py+1,T-2,T-2);
+        X.fillStyle='#648151';for(let j=0;j<6;j++)X.fillRect(px+4+hash(sx,y,j)*27,py+4+hash(sx,y,j+6)*27,3,4);
+        if(y%4===1){X.fillStyle='#2c3b2b';X.beginPath();X.arc(px+18,py+18,13,0,TAU);X.fill();X.fillStyle='#76976a';X.beginPath();X.arc(px+17,py+16,10,0,TAU);X.fill();}
+      }
+    }
     // indoor mess: scuffs, dropped papers, bottles
     for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) {
       const ch = G[y][x];
@@ -2015,6 +2310,36 @@ body { display: block; background: var(--night); }
     }
   }
 
+  // Apartment furniture details deliberately reuse existing furniture collision shapes.
+  function halloranDetails(f) {
+    for (const [ff,x,y,type] of g.halloranProps) {
+      if(ff!==f) continue;
+      const ch=G[y]?.[x]; if(!ch || ' #DOUWwL'.includes(ch)) continue;
+      const px=x*T,py=y*T;
+      X.save();
+      if(type==='bathtub') {X.fillStyle='#d0d2cc';X.fillRect(px+3,py+4,30,28);X.fillStyle='#647477';X.fillRect(px+7,py+8,22,19);X.fillStyle='#bec5c1';X.fillRect(px+8,py+9,20,2);}
+      else if(type==='toilet') {X.fillStyle='#d7d9d0';X.fillRect(px+9,py+4,18,9);X.beginPath();X.ellipse(px+18,py+22,10,9,0,0,TAU);X.fill();X.fillStyle='#75848a';X.beginPath();X.ellipse(px+18,py+22,6,5,0,0,TAU);X.fill();}
+      else if(type==='wardrobe'||type==='bookshelf') {X.fillStyle=type==='wardrobe'?'#514333':'#3c352c';X.fillRect(px+3,py+3,30,30);X.fillStyle='#a08b65'; for(let i=0;i<3;i++) X.fillRect(px+7,py+7+i*9,22,2);if(type==='wardrobe') {X.fillStyle='#b4a17c';X.fillRect(px+17,py+5,2,24);}}
+      else if(type==='washer'||type==='dryer') {X.fillStyle='#a4a9ad';X.fillRect(px+3,py+3,30,30);X.fillStyle='#343e47';X.beginPath();X.arc(px+18,py+19,10,0,TAU);X.fill();X.strokeStyle='#d4d8db';X.lineWidth=2;X.stroke();X.fillStyle='#272e35';X.fillRect(px+8,py+6,8,3);}
+      else if(type==='stove'||type==='sink') {X.fillStyle='#90979a';X.fillRect(px+4,py+4,28,28);X.strokeStyle='#263038';X.lineWidth=2; if(type==='sink')X.strokeRect(px+9,py+9,18,15);else for(const [ox,oy] of [[11,11],[24,11],[11,24],[24,24]]){X.beginPath();X.arc(px+ox,py+oy,4,0,TAU);X.stroke();}}
+      else if(type==='toys') {X.fillStyle='#ab775a'; X.fillRect(px+5,py+5,26,26);for(let i=0;i<5;i++){X.fillStyle=['#c45747','#607b95','#d0ac58'][i%3];X.fillRect(px+7+(i%3)*7,py+8+Math.floor(i/3)*9,6,6);}}
+      else if(type==='desk'||type==='dresser'||type==='nightstand') {X.fillStyle='#6b5542';X.fillRect(px+4,py+4,28,28);X.fillStyle='#aa967d';X.fillRect(px+7,py+9,22,2);X.fillRect(px+7,py+18,22,2);}
+      else if(type==='broken') {X.fillStyle='#726354';X.fillRect(px+5,py+6,22,16);X.strokeStyle='#292420';X.beginPath();X.moveTo(px+5,py+6);X.lineTo(px+29,py+27);X.stroke();}
+      else if(type==='tools') {X.fillStyle='#777e83';X.fillRect(px+6,py+8,24,19);X.fillStyle='#c5a262';X.fillRect(px+9,py+11,18,4);}
+      X.restore();
+    }
+    if(f===0) for(const [x,y,color] of g.halloranCars) {
+      const px=x*T,py=y*T,w=3*T,h=2*T;
+      X.save();X.fillStyle='rgba(0,0,0,.35)';X.fillRect(px+6,py+7,w-8,h-4);
+      X.fillStyle={slate:'#353c43',burgundy:'#5c3031',silver:'#8a9497',navy:'#29394f'}[color]||'#424b53';
+      X.fillRect(px+3,py+10,w-6,h-20);X.fillStyle='#182830';X.fillRect(px+25,py+14,w-49,h-28);
+      X.fillStyle='#9eb7bd';X.fillRect(px+28,py+17,15,h-34);X.fillRect(px+w-43,py+17,15,h-34);
+      X.fillStyle='rgba(255,255,255,.38)';X.fillRect(px+10,py+11,w-20,3);
+      X.fillStyle='#e9d4b2';X.fillRect(px+5,py+21,5,13);X.fillStyle='#c8493d';X.fillRect(px+w-10,py+21,5,13);
+      X.fillStyle='#c6b8a2';X.fillRect(px+5,py+14,4,11);X.fillRect(px+w-9,py+14,4,11);
+      X.fillStyle='#1b2025';X.fillRect(px+16,py+4,23,6);X.fillRect(px+16,py+h-10,23,6);X.fillRect(px+w-39,py+4,23,6);X.fillRect(px+w-39,py+h-10,23,6);X.restore();
+    }
+  }
   // ---------- painting: things ----------
   // A block of furniture. Neighbouring tiles of the same kind join into one piece.
   function slab(x, y, ch, col, pad, join) {
@@ -2030,6 +2355,7 @@ body { display: block; background: var(--night); }
 
   function thing(x, y) {
     const ch = G[y][x], px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
+    if (g.halloran && y>=19 && ch==='B' && g.halloranCars.some(([ax,ay])=>x>=ax && x<ax+3 && y>=ay && y<ay+2)) return;
     switch (ch) {
       case '#':
         X.fillStyle = K.wall; X.fillRect(px, py, T, T);
@@ -2318,11 +2644,31 @@ body { display: block; background: var(--night); }
         X.fillStyle = K.dumpLid; X.fillRect(px + 6, cy - 1, T - 12, 2);
         break;
       case 'g': {
-        const h = Math.floor(hash(x, y, 9) * 17);
-        X.fillStyle = K.bag; X.beginPath(); X.ellipse(px + 10 + h, py + 12 + (h % 9), 7, 5.5, h, 0, TAU); X.fill();
-        X.fillStyle = K.litter;
-        X.fillRect(px + 4 + (h * 5) % 26, py + 24 - (h % 6), 5, 3);
-        X.fillRect(px + 22 - (h % 11), py + 5 + (h * 3) % 20, 3, 4);
+        const isHalloranSidePark = g.halloran && (g.paintFloor ?? g.floor) === 0 && y >= 1 && y <= 15 &&
+          ((x === 0 && (g.halloranPark === 'west' || g.halloranPark === 'both')) ||
+           (x === 36 && (g.halloranPark === 'east' || g.halloranPark === 'both')));
+        if (isHalloranSidePark) {
+          X.fillStyle = '#5f7f50';
+          for (let j = 0; j < 7; j++) {
+            const gx = px + 4 + hash(x, y, 60 + j) * 28;
+            const gy = py + 5 + hash(x, y, 80 + j) * 24;
+            const gw = 2 + Math.floor(hash(x, y, 100 + j) * 2);
+            const gh = 3 + Math.floor(hash(x, y, 120 + j) * 3);
+            X.fillRect(gx, gy, gw, gh);
+          }
+          X.fillStyle = '#7f9d6b';
+          for (let j = 0; j < 4; j++) {
+            const gx = px + 6 + hash(x, y, 140 + j) * 24;
+            const gy = py + 7 + hash(x, y, 160 + j) * 20;
+            X.fillRect(gx, gy, 2, 2);
+          }
+        } else {
+          const h = Math.floor(hash(x, y, 9) * 17);
+          X.fillStyle = K.bag; X.beginPath(); X.ellipse(px + 10 + h, py + 12 + (h % 9), 7, 5.5, h, 0, TAU); X.fill();
+          X.fillStyle = K.litter;
+          X.fillRect(px + 4 + (h * 5) % 26, py + 24 - (h % 6), 5, 3);
+          X.fillRect(px + 22 - (h % 11), py + 5 + (h * 3) % 20, 3, 4);
+        }
         break;
       }
       case 'h':
@@ -2416,7 +2762,7 @@ body { display: block; background: var(--night); }
     }
     g = {
       floors: L.grids.map(grid => ({ grid, seen: new Uint8Array(MW * MH), art: makeLayer(), mem: makeLayer() })),
-      floor: 0, rugs: L.rugs, tvs: L.tvs, evidence: L.evidence, van: v, spots: L.spots,
+      floor: 0, rugs: L.rugs, tvs: L.tvs, evidence: L.evidence, van: v, spots: L.spots, halloran: levelSel === 'apartments', halloranFinishes:L.halloranFinishes, halloranProps:L.halloranProps, halloranCars:L.halloranCars, halloranPark:L.halloranPark,
       p: {
         x: v.x + v.w - 16, y: v.y + v.h / 2, vx: 0, vy: 0, r: 11, hp: 5, max: 5, armor: 0, ang: Math.PI, mAng: 0, walk: 0, moving: 0, stepAcc: 0,
         gun: 'pistol', cool: 0, reload: 0, relStage: 0, recoil: 0, flash: 0,
@@ -2653,7 +2999,7 @@ body { display: block; background: var(--night); }
     taser: '<path d="M12 8h30l4 3v5H28l-2 10h-8l-2-10h-4z"/><path d="M46 12h8M46 15h8M16 12h18"/>',
   });
   const TAB = { smg: 'w', shotgun: 'w', rifle: 'w', taser: 'w', shield: 'g', vest: 'g', nvg: 'g', ladder: 'g', ram: 'g', grenade: 'g' };
-  let shopTab = 'w';
+  let shopTab = 'w', vanSelected = 'smg', vanConfirm = false, vanGunConfirm = null;
   const icon = id => `<span class="ic"><svg viewBox="0 0 64 28" aria-hidden="true"><g ${id === 'pistol' ? 'transform="translate(64 0) scale(-1 1)" ' : ''}fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">${ICON[id]}</g></svg></span>`;
   function cost() {
     let c = 0;
@@ -2662,39 +3008,115 @@ body { display: block; background: var(--night); }
     return c + sel.grenade * item('grenade').cost;
   }
   function renderShop() {
+    const gunMode = shopTab === 'w';
     const c = cost(), left = points - c;
-    $('rackPts').innerHTML = `Cash <b>$${points}</b>` + (c ? ` &nbsp; Cost <b class="${left < 0 ? 'bad' : ''}">$${c}</b>` : '');
-    $('tabW').setAttribute('aria-selected', String(shopTab === 'w')); $('tabG').setAttribute('aria-selected', String(shopTab === 'g'));
-    let h = shopTab === 'w' ? `<div class="kit" aria-disabled="true">${icon('pistol')}<span class="nm">Pistol</span><span class="ct">Issued</span><span class="ds">Standard sidearm. Always carried.</span></div>` : '';
+    $('rackPts').innerHTML = `Cash <b>$${points}</b>` + (!gunMode && c ? ` &nbsp; Cost <b class="${left < 0 ? 'bad' : ''}">$${c}</b>` : '');
+    $('tabW').setAttribute('aria-selected', String(gunMode));
+    $('tabG').setAttribute('aria-selected', String(!gunMode));
+    let h = gunMode ? `<div class="kit van-pistol" aria-disabled="true"><span class="ic gun-locker">${gunSide('pistol')}</span><span class="nm">Pistol</span><span class="ct">Issued</span></div>` : '';
     for (const it of SHOP) {
       if (TAB[it.id] !== shopTab) continue;
-      const on = it.group ? sel.primary === it.id : it.max ? sel.grenade > 0 : !!sel[it.id];
+      const on = it.group ? owned.primary === it.id : it.max ? sel.grenade > 0 : !!sel[it.id];
       const carried = it.group ? owned.primary === it.id : !it.max && owned[it.id];
       const mine = it.group && locker.guns[it.id];
-      const short = !carried && !mine && (on ? left < 0 : it.cost > left);            // cannot be paid for: its price shows red
-      h += `<button type="button" class="kit" id="buy-${it.id}" data-id="${it.id}" aria-pressed="${on}"${carried && !it.group ? ' disabled' : ''}>${icon(it.id)}` +
-        `<span class="nm">${it.name}${it.max ? ' × ' + sel.grenade : ''}</span><span class="ct${short ? ' short' : ''}">${carried ? 'Carried' : mine ? 'In locker' : '$' + it.cost}</span>` +
+      const short = !it.group && !carried && (on ? left < 0 : it.cost > left);
+      h += `<button type="button" class="kit" id="buy-${it.id}" data-id="${it.id}" aria-pressed="${it.group ? vanSelected === it.id : on}"${carried && !it.group ? ' disabled' : ''}>${icon(it.id)}` +
+        `<span class="nm">${it.name}${it.max ? ' × ' + sel.grenade : ''}</span><span class="ct${short ? ' short' : ''}">${carried ? 'Equipped' : mine ? 'Owned · Stowed' : '$' + it.cost}</span>` +
         `<span class="ds">${it.desc}</span></button>`;
     }
     $('rackItems').innerHTML = h;
-    $('rackOk').disabled = left < 0 || (c === 0 && sel.primary === owned.primary);
+    const it = item(vanSelected) || SHOP.find(q => TAB[q.id] === shopTab);
+    const details = it ? `<div class="lk-load">Van / <b>${gunMode ? 'Weapons' : 'Gadgets'}</b></div>` +
+      `<div class="lk-art">${it.group ? gunSide(it.id) : icon(it.id)}</div><h3>${it.name}</h3><p>${it.desc}</p>` : '';
+    if (gunMode && it && it.group) {
+      const has = !!locker.guns[it.id] || owned.primary === it.id;
+      const equipped = owned.primary === it.id;
+      const buyAllowed = points >= it.cost;
+      const actionText = !has ? !buyAllowed ? 'Insufficient funds' : vanGunConfirm === it.id ? `Confirm purchase · $${it.cost}` : `Buy · $${it.cost}` : equipped ? 'Stow' : 'Equip';
+      $('vanDetails').innerHTML = details +
+        `<dl class="lk-stats"><dt>Cash available</dt><dd>$${points}</dd><dt>Weapon status</dt><dd>${equipped ? 'Equipped' : has ? 'Stowed in locker' : 'Not owned'}</dd>${!has ? `<dt>Price</dt><dd>$${it.cost}</dd>` : ''}</dl>` +
+        `<p class="kit-help">${!has ? 'Buy this gun to add it to your locker. Then equip it whenever you want.' : equipped ? 'Stow this weapon in the van and switch back to your pistol.' : 'Equip this owned gun from the van.'}</p>` +
+        `<button type="button" id="vanGunAction" class="issue van-purchase"${!has && !buyAllowed ? ' disabled' : ''}>${actionText}</button>`;
+      $('rackNote').textContent = g.secured ? 'Evidence is aboard. Close this and press F to extract, or re-arm and go back in.' : 'Ammunition topped up. Bought guns stay in your locker.';
+      return;
+    }
+    const canApply = left >= 0 && !(c === 0 && sel.primary === owned.primary &&
+       !SHOP.some(q => !q.group && (q.max ? sel.grenade > 0 : !!sel[q.id] !== !!owned[q.id])));
+    const purchaseText = !canApply ? (left < 0 ? 'Insufficient funds' : 'No loadout changes') :
+      vanConfirm ? `Confirm purchase${c ? ' · $' + c : ''}` : c ? `Buy loadout · $${c}` : 'Apply loadout';
+    $('vanDetails').innerHTML = details +
+      `<dl class="lk-stats"><dt>Cash available</dt><dd>$${points}</dd><dt>Pending cost</dt><dd class="${left < 0 ? 'price-short' : ''}">$${c}</dd><dt>Cash remaining</dt><dd class="${left < 0 ? 'price-short' : ''}">$${left}</dd></dl>` +
+      `<p class="kit-help">Select equipment on the left to add or remove it. ${c ? 'Confirm your purchase with a second click.' : 'Existing equipment can be equipped without another purchase.'}</p>` +
+      `<button type="button" id="vanPurchase" class="issue van-purchase"${canApply ? '' : ' disabled'}>${purchaseText}</button>`;
     $('rackNote').textContent = left < 0 ? 'Not enough cash for that.' : g.secured ? 'Evidence is aboard. Close this and press F to extract, or re-arm and go back in.' : 'Ammunition topped up. Cash comes from suspects down, evidence, full clears and what you find.';
+  }
+  // A van weapon change is a locker transfer, never a dropped gun on the mission map.
+  function vanEquipGun(k) {
+    const prev = owned.primary;
+    if (prev === k || (k && !locker.guns[k])) return;
+    if (prev && g.guns[prev]) delete g.guns[prev];
+    if (prev && g.bare[prev]) g.bare[prev] = false;
+    if (k) {
+      if (g.bare[k]) g.bare[k] = false;
+      applyAtt(g.bare);
+      g.guns[k] = { mag: GUNS[k].mag, res: GUNS[k].res };
+      g.longGunMeta = { owned: true, bare: false, att: { ...(GUNS[k].att || {}) } };
+    } else g.longGunMeta = null;
+    owned.primary = k;
+    sel.primary = k;
+    locker.primary = k;
+    saveLocker();
+    g.slots = ['pistol']; if (k) g.slots.push(k); if (g.guns.taser) g.slots.push('taser');
+    if (g.p.gun === prev || !g.guns[g.p.gun]) g.p.gun = k || 'pistol';
+    g.p.reload = 0;
+    playClip('cock2', 0.7);
+    hud(true);
   }
   $('rackItems').addEventListener('click', e => {
     const b = e.target.closest ? e.target.closest('button.kit') : null;
     if (!b || b.disabled) return;
     const it = item(b.dataset.id);
-    if (it.group) sel.primary = sel.primary === it.id ? owned.primary : it.id;
+    vanSelected = it.id; vanConfirm = false; vanGunConfirm = null;
+    if (it.group) { /* Selecting a gun only opens its Buy / Equip / Stow controls. */ }
     else if (it.max) sel.grenade = (sel.grenade + 1) % (Math.max(0, it.max - g.grenades) + 1);
     else sel[it.id] = !sel[it.id];
     renderShop();
     const again = $('buy-' + it.id); if (again && again.focus) again.focus();
   });
-  $('tabW').addEventListener('click', () => { shopTab = 'w'; renderShop(); });
-  $('tabG').addEventListener('click', () => { shopTab = 'g'; renderShop(); });
+  $('tabW').addEventListener('click', () => { shopTab = 'w'; vanSelected = 'smg'; vanConfirm = false; vanGunConfirm = null; renderShop(); });
+  $('tabG').addEventListener('click', () => { shopTab = 'g'; vanSelected = 'vest'; vanConfirm = false; vanGunConfirm = null; renderShop(); });
   $('rackCancel').addEventListener('click', () => closeShop());
   $('rackExtract').addEventListener('click', () => { rack.hidden = true; finish(true); });
-  $('rackOk').addEventListener('click', () => { if (cost() > points || (cost() === 0 && sel.primary === owned.primary)) return; applyLoadout(); sfx.coin(); sfx.pickup(); renderShop(); hud(true); });
+  $('vanDetails').addEventListener('click', e => {
+    if (e.target.closest('#vanGunAction')) {
+      const it = item(vanSelected);
+      if (!it || !it.group) return;
+      if (!locker.guns[it.id] && owned.primary !== it.id) {
+        if (points < it.cost) return;
+        if (vanGunConfirm !== it.id) {
+          vanGunConfirm = it.id; sfx.pickup(); renderShop();
+          $('vanGunAction')?.focus(); return;
+        }
+        points -= it.cost; savePoints();
+        locker.guns[it.id] = true; saveLocker();
+        vanGunConfirm = null; sfx.coin();
+      } else {
+        vanGunConfirm = null;
+        vanEquipGun(owned.primary === it.id ? null : it.id);
+      }
+      renderShop(); hud(true); return;
+    }
+    if (!e.target.closest('#vanPurchase')) return;
+    const c = cost();
+    if (c > points) return;
+    if (c > 0 && !vanConfirm) {
+      vanConfirm = true; sfx.pickup(); renderShop();
+      const btn = $('vanPurchase'); if (btn) btn.focus();
+      return;
+    }
+    vanConfirm = false;
+    applyLoadout(); sfx.coin(); sfx.pickup(); renderShop(); hud(true);
+  });
 
   // The weapon on the ground is a real item, not a freshly generated copy.
   // Preserve its ammunition, origin, and fitted attachments when it's swapped out.
@@ -2764,12 +3186,14 @@ body { display: block; background: var(--night); }
   function openShop() {
     mode = 'shop'; keys.clear(); mouse.down = false;
     for (const k in g.guns) g.guns[k].res = Math.max(g.guns[k].res, GUNS[k].res);   // ammunition is free at the van
-    sfx.pickup();
+    audioInit();
+    playClip('lkopen' + (1 + Math.floor(Math.random() * 4)), 0.85, rand(0.97, 1.03));
     sel = Object.assign({}, owned, { grenade: 0 });
+    shopTab = 'w'; vanSelected = 'smg'; vanConfirm = false; vanGunConfirm = null;
     renderShop(); rack.hidden = false;
     const b = $('rackCancel'); if (b.focus) b.focus();
   }
-  function closeShop() { rack.hidden = true; mode = 'play'; last = performance.now(); if (cv.focus) cv.focus(); }
+  function closeShop() { playClip('lkshut' + (1 + Math.floor(Math.random() * 3)), 0.85, rand(0.97, 1.03)); rack.hidden = true; mode = 'play'; last = performance.now(); if (cv.focus) cv.focus(); }
 
   // ---------- flow ----------
   ICON.block = '<path fill-rule="evenodd" d="M14 2h36v24H14zM19 6h6v5h-6zM29 6h6v5h-6zM39 6h6v5h-6zM19 15h6v5h-6zM39 15h6v5h-6zM29 16h6v10h-6z"/>';
@@ -2785,7 +3209,7 @@ body { display: block; background: var(--night); }
     { id: 'club', icon: 'club', name: 'The Lantern Room', kind: 'Nightclub', desc: 'Late. A bar and a dance floor out front, back rooms behind a wall, and a lounge upstairs.' },
   ];
   const JOBS = {
-    evidence: { name: 'Secure the evidence', brief: 'The evidence is upstairs, as deep in as it gets. Carry it back to the van.', go: 'Secure the evidence. It is upstairs.' },
+    evidence: { name: 'Secure the evidence', brief: 'Secure the Evidence.', go: 'Secure the evidence. It is upstairs.' },
     stash: { name: 'Take the ledger', brief: 'A ledger is locked behind the reinforced door on the ground floor. You will need the ram or a grenade from the van. Carry it back.', go: 'The ledger is behind the reinforced door.' },
     clear: { name: 'Clear the building', brief: 'Nothing to carry this time. Put every suspect down, then get back to the van.', go: 'Clear the building. Every suspect.' },
   };
@@ -2891,7 +3315,7 @@ body { display: block; background: var(--night); }
     moveStick = null; aimStick = null;
     mode = 'pause'; veilMode = 'pause';
     panel({ kicker: 'Unit 14 / Paused', title: 'Holding position', keys: true, go: 'Resume', reset: true, quit: true,
-      text: JOBS[g.job].brief, note: 'Restart plays this same building again from the van.' });
+      text: g.job === 'clear' ? 'Clear the building' : 'Secure evidence' });
   }
   function resume() { audioInit(); mode = 'play'; veil.hidden = true; last = performance.now(); if (cv.focus) cv.focus(); }
   function finish(won) {
@@ -3531,19 +3955,30 @@ body { display: block; background: var(--night); }
       if (tileAt(cx, cy) === 'z') { cutWire(Math.floor(cx / T), Math.floor(cy / T)); break; }
     }
   }
+  // Backgrounds and objects are independent: when an object is destroyed,
+  // restore the underlying terrain according to the level's floor metadata.
+  // Never infer a floor material from the destroyed object's tile code.
+  function exposedFloorTile(tx, ty) {
+    if (ty > 16) return ',';
+    if (g.halloran && ty >= 7 && ty <= 8 && tx >= 3 && tx <= 34) return ':';
+    const finish = g.halloranFinishes?.[g.floor]?.[ty]?.[tx];
+    if (finish === 'checker' || finish === 'bath' || finish === 'vinyl') return ';';
+    if (!(g.concrete || g.carpet) && (ty === 7 || ty === 8)) return ':';
+    return '.';
+  }
   function cutWire(tx, ty) {
     const stack = [[tx, ty]];
     while (stack.length) {
       const [x, y] = stack.pop();
       if (tile(x, y) !== 'z') continue;
-      G[y][x] = y > 16 ? ',' : !(g.concrete || g.carpet) && (y === 7 || y === 8) ? ':' : '.';
+      G[y][x] = exposedFloorTile(x, y);
       repaint(g.floor, x, y); sparks((x + .5) * T, (y + .5) * T, 8, '#8b9096');
       stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
     }
     sfx.wireCut();
   }
   function breakCrate(tx, ty) {
-    G[ty][tx] = ty > 16 ? ',' : !(g.concrete || g.carpet) && (ty === 7 || ty === 8) ? ':' : '.';     // whatever floor it was standing on
+    G[ty][tx] = exposedFloorTile(tx, ty);     // restore original floor underneath the object
     repaint(g.floor, tx, ty); fields.clear();
     const x = (tx + .5) * T, y = (ty + .5) * T;
     sfx.crate(); sparks(x, y, 16, K.crate, 240);
@@ -4772,7 +5207,7 @@ body { display: block; background: var(--night); }
   }
   // The title car is a separate lightweight vector asset.
     const titleCarImage = new Image();
-    titleCarImage.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgMzMwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJibGsiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iIzMxMzQzYSIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjMTQxODFlIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDgwYjEwIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImdsYXNzIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMxNjg5YjUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwODYwN2QiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iZG9vciIgeDI9IjAiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjZmZmIi8+PHN0b3Agb2Zmc2V0PSIuNzUiIHN0b3AtY29sb3I9IiNlZWYyZjYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNiN2MxZDAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz4KPGVsbGlwc2UgY3g9IjM5OSIgY3k9IjI5MyIgcng9IjM2MCIgcnk9IjE3IiBmaWxsPSIjMDUwNzBhIiBvcGFjaXR5PSIuNCIvPgo8cGF0aCBkPSJNNDMgMTc3TDYzIDE2M0wxNTMgMTQ5TDIyMCAxMDlRMjQ0IDkxIDI3NyA3OFEzMDYgNjcgMzUxIDY2SDQ3MlE1MzEgNjggNTY5IDk2TDYyOCAxNDVRNjc0IDE1MSA3NDYgMTY1UTc3NCAxNzcgNzc5IDIwN1YyNTFRNzc1IDI2MyA3NTAgMjYzSDU1UTI4IDI2MiAyNCAyNTFWMjExUTI2IDE5MCA0MyAxNzdaIiBmaWxsPSJ1cmwoI2JsaykiIHN0cm9rZT0iIzAzMDQwNyIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0yMTggMTExUTI1NSA3OCAzNDYgNzdINDc1UTUyNiA3OSA1NjEgMTAzTDYxOCAxNTVIMTkzWiIgZmlsbD0iIzA0MDkwZSIgc3Ryb2tlPSIjNTA1ODYxIiBzdHJva2Utd2lkdGg9IjUiLz4KPHBhdGggZD0iTTIyNyAxMTZRMjY3IDkxIDM0MCA5MEgzNjVWMTUwSDIwNlogTTM3OSA5MEg0NzRMNDg5IDE1MEgzNzlaIE00OTMgOTJRNTM3IDEwMiA1OTAgMTUwSDUwNloiIGZpbGw9InVybCgjZ2xhc3MpIi8+CjxwYXRoIGQ9Ik0yODUgOTMgMzA1IDkxIDI2OCAxNTAgMjQ5IDE1MFogTTQxNyA5MUg0MzVMNDAzIDE1MEgzODZaIE01MzMgMTA0IDU0NyAxMTIgNTI1IDE1MEg1MTFaIiBmaWxsPSIjODBkY2Y3IiBvcGFjaXR5PSIuMzgiLz4KPHBhdGggZD0iTTE5MyAxNTlINjM1TDYyOSAyNTJRNjI2IDI2NSA2MDggMjY1SDIxOFExOTUgMjYyIDE5NCAyNDdaIiBmaWxsPSJ1cmwoI2Rvb3IpIi8+CjxwYXRoIGQ9Ik0zNzUgMTYxVjI2NCBNNTA1IDE2MiA1MDMgMjY0IiBmaWxsPSJub25lIiBzdHJva2U9IiM1OTYxNmIiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iLjY1Ii8+CjxwYXRoIGQ9Ik0yMDQgMTY0SDYyOCIgc3Ryb2tlPSIjNjM2YTczIiBvcGFjaXR5PSIuNiIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxwYXRoIGQ9Ik0yMjAgMjYwSDYwNyIgc3Ryb2tlPSIjNzE4MDk1IiBvcGFjaXR5PSIuNSIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxnIGZpbGw9IiMxNzFjMjIiIHN0cm9rZT0iIzM0M2I0MyIgc3Ryb2tlLXdpZHRoPSIzIj48cmVjdCB4PSIyMzMiIHk9IjE3NCIgd2lkdGg9IjQyIiBoZWlnaHQ9IjEyIiByeD0iNCIvPjxyZWN0IHg9IjQzMiIgeT0iMTc0IiB3aWR0aD0iNDIiIGhlaWdodD0iMTIiIHJ4PSI0Ii8+PC9nPgo8cGF0aCBkPSJNNTg2IDE1NVE2MDIgMTQ3IDYxOCAxNTlMNjI3IDE3MUg1ODlaIiBmaWxsPSIjMTAxNTFhIi8+PHJlY3QgeD0iNjAwIiB5PSIxNjQiIHdpZHRoPSIyNCIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI2ZmY2Q0OSIvPgo8dGV4dCB4PSI0MTIiIHk9IjI0NyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI3NyIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXN0eWxlPSJpdGFsaWMiIGZvbnQtd2VpZ2h0PSI5MDAiIGxldHRlci1zcGFjaW5nPSItNCIgZmlsbD0iIzExMTkyNyI+UE9MSUNFPC90ZXh0Pgo8cGF0aCBkPSJNNDAgMTc4SDg2TDc5IDE5NEgyNVoiIGZpbGw9IiNkYzIwMmQiLz48cGF0aCBkPSJNMzUgMTgxSDgxTDc4IDE4NUgzM1oiIGZpbGw9IiNmZmYxZjEiLz4KPHBhdGggZD0iTTczMSAxNzUgNzU5IDE4NyA3NzAgMjA3IDc0MSAyMDFaIiBmaWxsPSIjZjVmOGZhIi8+PHBhdGggZD0iTTczMiAxNzYgNzQ4IDE4MSA3NjEgMTk2IDczOSAxOTJaIiBmaWxsPSIjZjU4YTIzIi8+CjxwYXRoIGQ9Ik0zNjkgNzZWNTlRMzcxIDQ3IDM4MiA0N0g0MTNRNDIzIDQ5IDQyNSA2MVY3N1oiIGZpbGw9IiMxMTEzMTgiLz48cmVjdCB4PSIzODAiIHk9IjQyIiB3aWR0aD0iMzYiIGhlaWdodD0iMzIiIHJ4PSI5IiBmaWxsPSIjZWIxMTI0Ii8+PGVsbGlwc2UgY3g9IjM5MCIgY3k9IjUwIiByeD0iNiIgcnk9IjQiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii44Ii8+CjxnPjxjaXJjbGUgY3g9IjE3MyIgY3k9IjI2MCIgcj0iNTIiIGZpbGw9IiMwNjA4MGIiLz48Y2lyY2xlIGN4PSIxNzMiIGN5PSIyNjAiIHI9IjM4IiBmaWxsPSIjZDhlMGU4IiBzdHJva2U9IiM3MDdiODUiIHN0cm9rZS13aWR0aD0iNSIvPjxjaXJjbGUgY3g9IjE3MyIgY3k9IjI2MCIgcj0iMjciIGZpbGw9IiMzYjQ2NTIiLz48ZyBzdHJva2U9IiNmMWYzZjgiIHN0cm9rZS13aWR0aD0iOSI+PHBhdGggZD0iTTE3MyAyMjdWMjkzTTE0MCAyNjBIMjA2TTE1MCAyMzcgMTk2IDI4M00xOTYgMjM3IDE1MCAyODMiLz48L2c+PGNpcmNsZSBjeD0iMTczIiBjeT0iMjYwIiByPSIxMSIgZmlsbD0iIzlkYTliNSIgc3Ryb2tlPSIjMzQzYjQ1IiBzdHJva2Utd2lkdGg9IjMiLz48L2c+CjxnPjxjaXJjbGUgY3g9IjY1MCIgY3k9IjI2MCIgcj0iNTIiIGZpbGw9IiMwNjA4MGIiLz48Y2lyY2xlIGN4PSI2NTAiIGN5PSIyNjAiIHI9IjM4IiBmaWxsPSIjZDhlMGU4IiBzdHJva2U9IiM3MDdiODUiIHN0cm9rZS13aWR0aD0iNSIvPjxjaXJjbGUgY3g9IjY1MCIgY3k9IjI2MCIgcj0iMjciIGZpbGw9IiMzYjQ2NTIiLz48ZyBzdHJva2U9IiNmMWYzZjgiIHN0cm9rZS13aWR0aD0iOSI+PHBhdGggZD0iTTY1MCAyMjdWMjkzTTYxNyAyNjBINjgzTTYyNyAyMzcgNjczIDI4M002NzMgMjM3IDYyNyAyODMiLz48L2c+PGNpcmNsZSBjeD0iNjUwIiBjeT0iMjYwIiByPSIxMSIgZmlsbD0iIzlkYTliNSIgc3Ryb2tlPSIjMzQzYjQ1IiBzdHJva2Utd2lkdGg9IjMiLz48L2c+PC9zdmc+';
+    titleCarImage.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MDAgMzUwIj4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iYm9keSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMzNDM4M2UiLz48c3RvcCBvZmZzZXQ9Ii40MiIgc3RvcC1jb2xvcj0iIzE3MWIyMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA5MGMxMSIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ2xhc3MiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iIzE2OGVhZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA3NTY2YiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0iZG9vcnMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjZmZmIi8+PHN0b3Agb2Zmc2V0PSIuNzgiIHN0b3AtY29sb3I9IiNmM2Y2ZjgiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNjYmQyZDgiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+CjxlbGxpcHNlIGN4PSIzNTEiIGN5PSIyNzciIHJ4PSIzMTIiIHJ5PSIxMiIgZmlsbD0iIzAxMDMwNyIgb3BhY2l0eT0iLjQiLz4KPCEtLSBUcmFjZWQgcHJvZmlsZTogc3F1YXJlZC1vZmYgdHJ1bmssIGxvbmcgZ2VudGx5IGN1cnZpbmcgcmVhciByb29mLCBzaG9ydCBob29kLCBsb3cgZnJvbnQgbm9zZS4gLS0+CjxwYXRoIGQ9Ik00OSAxODMgTDYxIDE1NCBMMTAwIDE0NiBMMTUxIDEyMyBMMjE1IDkxIFEyNTEgNzcgMjg5IDc4IEwzODUgNzggUTQxNiA3NyA0NTUgOTIgTDUyOSAxMzIgTDU2NiAxNDMgTDYxOSAxNDkgUTY0NCAxNTEgNjU2IDE2NCBMNjYyIDE4NSBMNjYyIDIzNCBRNjYwIDI1MyA2NDkgMjU3IEw1OCAyNTcgUTQ1IDI1MiA0NyAyMzYgWiIgZmlsbD0idXJsKCNib2R5KSIgc3Ryb2tlPSIjMDkwYjBmIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPCEtLSBzdWJ0bGUgYm9keSByZWZsZWN0aW9uIC0tPgo8cGF0aCBkPSJNNjUgMTUxIEwxNTEgMTI2IEwyMTUgOTUgUTI0OSA4MSAyODcgODIgSDM4NiBRNDEzIDgyIDQ0NSA5NCBMNTI1IDEzNyBMNjE2IDE1MSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTg2MDY5IiBzdHJva2Utd2lkdGg9IjMiIG9wYWNpdHk9Ii42NSIvPgo8IS0tIHdpbmRvd3MgcHJlY2lzZWx5IGZvbGxvdyBnZW50bHkgcm91bmRlZCByZWZlcmVuY2Ugcm9vZiwgZGl2aWRlZCB3aXRoIHNsb3BpbmcgcGlsbGFycyAtLT4KPHBhdGggZD0iTTIxMSA5NiBRMjQ0IDgzIDI4NyA4MyBIMzg1IFE0MTcgODQgNDQ4IDk5IEw1MDUgMTMyIEw1MzAgMTQzIEgxOTQgWiIgZmlsbD0iIzA3MGIxMCIvPgo8cGF0aCBkPSJNMjA0IDEzNiBMMjIyIDEwMyBRMjQ4IDkyIDI4NSA5MCBIMjg5IEwyNzMgMTM2IFoiIGZpbGw9InVybCgjZ2xhc3MpIi8+CjxwYXRoIGQ9Ik0yOTggOTAgSDM4NCBMMzk2IDEzNiBIMjgyIFoiIGZpbGw9InVybCgjZ2xhc3MpIi8+CjxwYXRoIGQ9Ik0zOTMgOTEgUTQyMCA5MyA0NDkgMTA4IEw0OTcgMTM2IEg0MDUgWiIgZmlsbD0idXJsKCNnbGFzcykiLz4KPHBhdGggZD0iTTIzOSA5NSBIMjU2IEwyMjkgMTM1IEgyMTUgWiBNMzMyIDkxIEgzNDYgTDMxNyAxMzUgSDMwMyBaIE00MzYgMTAyIEw0NDcgMTA5IEw0MjIgMTM2IEg0MTEgWiIgZmlsbD0iI2EzZWNmYyIgb3BhY2l0eT0iLjI0Ii8+CjxwYXRoIGQ9Ik0yODAgODcgTDI3NyAxNDAgTTM4OCA4NyBMNDAxIDE0MCIgc3Ryb2tlPSIjMDgwYjEwIiBzdHJva2Utd2lkdGg9IjciLz4KPCEtLSBSZWZlcmVuY2Utc3R5bGUgc2luZ2xlIHN0cmFpZ2h0IHdoaXRlIGRvb3IgcGFuZWwgZm9sbG93aW5nIHNlZGFuIGRvb3JzOyBib2R5IHN0YXlzIHZpc2libGUgYmVoaW5kIHdoZWVscyAtLT4KPHBhdGggZD0iTTE4MSAxNDIgSDUwOSBRNTE3IDE0MyA1MTMgMTU1IEw1MDcgMjQ4IFE1MDQgMjU2IDQ5MyAyNTYgSDIxMyBRMTk4IDI1NiAxOTYgMjQ1IEwxNzkgMTU4IFExNzggMTQ5IDE4MSAxNDIgWiIgZmlsbD0idXJsKCNkb29ycykiIHN0cm9rZT0iIzI5MmYzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Ik0zMzYgMTQyIEwzNDIgMjU1IiBzdHJva2U9IiM5ZmFhYjMiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIuNjUiLz4KPHBhdGggZD0iTTE5MyAxNTEgSDUwOSIgc3Ryb2tlPSIjZDVkY2UxIiBzdHJva2Utd2lkdGg9IjMiIG9wYWNpdHk9Ii41Ii8+CjxyZWN0IHg9IjIwMyIgeT0iMTUwIiB3aWR0aD0iMjUiIGhlaWdodD0iOCIgcng9IjIuNSIgZmlsbD0iIzFjMjUyYyIvPjxyZWN0IHg9IjM1MSIgeT0iMTUwIiB3aWR0aD0iMjUiIGhlaWdodD0iOCIgcng9IjIuNSIgZmlsbD0iIzFjMjUyYyIvPgo8cmVjdCB4PSIyMDYiIHk9IjE1MSIgd2lkdGg9IjE1IiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjYTRiMmJkIi8+PHJlY3QgeD0iMzUzIiB5PSIxNTEiIHdpZHRoPSIxNSIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iI2E0YjJiZCIvPgo8IS0tIHZlaGljbGUgc2lkZSBtaXJyb3IgLS0+CjxwYXRoIGQ9Ik01MDEgMTM4IFE1MTAgMTMwIDUyMSAxMzggTDUyNSAxNDggTDUwOCAxNDkgWiIgZmlsbD0iIzFjMjAyNSIvPjxyZWN0IHg9IjUxMCIgeT0iMTQwIiB3aWR0aD0iMTMiIGhlaWdodD0iMy41IiByeD0iMS41IiBmaWxsPSIjZWZiYTU4Ii8+CjwhLS0gTE9XIHdvcmQgcG9zaXRpb24sIGJ1dCB3aXRob3V0IGludHJ1ZGluZyBpbnRvIHRpcmVzIC0tPgo8dGV4dCB4PSIzNDgiIHk9IjIxMSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjU2IiBmb250LXdlaWdodD0iOTAwIiBsZXR0ZXItc3BhY2luZz0iLTEuNSIgZmlsbD0iIzEwMTgyNyI+UE9MSUNFPC90ZXh0Pgo8IS0tIGxpZ2h0cyBhdCBlbmRzIC0tPgo8cGF0aCBkPSJNNTkgMTYwIEw4OCAxNTkgTDgzIDE3MCBINTAgWiIgZmlsbD0iI2UwMmMzNiIvPjxwYXRoIGQ9Ik02MCAxNjEgSDg0IEw4MSAxNjQgSDU2IFoiIGZpbGw9IiNmNGY3ZjkiLz4KPHBhdGggZD0iTTYyMSAxNTYgTDY0NyAxNjEgTDY2MCAxODAgTDY0MSAxNzUgWiIgZmlsbD0iI2VlZjJmNSIvPjxwYXRoIGQ9Ik02MjcgMTU2IEw2NDcgMTYyIEw2NTMgMTcxIEw2MzYgMTY4IFoiIGZpbGw9IiNlOTdlMzIiLz4KPCEtLSByZWQgcm9vZiBzaXJlbiwgbmFycm93IGxpa2UgcmVmZXJlbmNlIC0tPgo8cGF0aCBkPSJNMzE5IDgxIEwzMTkgNzAgUTMyMCA2NCAzMjYgNjQgSDMzNiBRMzQzIDY1IDM0MyA3MSBMMzQ1IDgxIFoiIGZpbGw9IiMxNjFhMWYiLz4KPHBhdGggZD0iTTMyNSA3MCBRMzI1IDYxIDMzMSA2MSBRMzM4IDYxIDMzOCA3MSBMMzM4IDc5IEgzMjQgWiIgZmlsbD0iI2U0MjMzNyIvPgo8IS0tIHRpcmVzIGF0IGV4YWN0IHJlZmVyZW5jZSBjZW50ZXJzLCBsb3dlciByZWxhdGl2ZSB0byByYWlzZWQgYm9keSAtLT4KPGc+PGNpcmNsZSBjeD0iMTgxIiBjeT0iMjMwIiByPSI0NSIgZmlsbD0iIzA3MGEwZSIvPjxjaXJjbGUgY3g9IjE4MSIgY3k9IjIzMCIgcj0iMzQiIGZpbGw9IiNkOWUwZTYiIHN0cm9rZT0iIzUwNTk2MyIgc3Ryb2tlLXdpZHRoPSI0Ii8+PGNpcmNsZSBjeD0iMTgxIiBjeT0iMjMwIiByPSIyNSIgZmlsbD0iIzI0MmMzNCIvPjxnIHN0cm9rZT0iI2Y1ZjZmOCIgc3Ryb2tlLXdpZHRoPSI3Ij48cGF0aCBkPSJNMTgxIDIwNVYyNTVNMTU2IDIzMEgyMDZNMTYzIDIxMkwxOTkgMjQ4TTE5OSAyMTJMMTYzIDI0OCIvPjwvZz48Y2lyY2xlIGN4PSIxODEiIGN5PSIyMzAiIHI9IjgiIGZpbGw9IiNhYmI1YzAiIHN0cm9rZT0iIzQ0NGU1OCIgc3Ryb2tlLXdpZHRoPSIzIi8+PC9nPgo8Zz48Y2lyY2xlIGN4PSI1NDgiIGN5PSIyMzAiIHI9IjQ1IiBmaWxsPSIjMDcwYTBlIi8+PGNpcmNsZSBjeD0iNTQ4IiBjeT0iMjMwIiByPSIzNCIgZmlsbD0iI2Q5ZTBlNiIgc3Ryb2tlPSIjNTA1OTYzIiBzdHJva2Utd2lkdGg9IjQiLz48Y2lyY2xlIGN4PSI1NDgiIGN5PSIyMzAiIHI9IjI1IiBmaWxsPSIjMjQyYzM0Ii8+PGcgc3Ryb2tlPSIjZjVmNmY4IiBzdHJva2Utd2lkdGg9IjciPjxwYXRoIGQ9Ik01NDggMjA1VjI1NU01MjMgMjMwSDU3M001MzAgMjEyTDU2NiAyNDhNNTY2IDIxMkw1MzAgMjQ4Ii8+PC9nPjxjaXJjbGUgY3g9IjU0OCIgY3k9IjIzMCIgcj0iOCIgZmlsbD0iI2FiYjVjMCIgc3Ryb2tlPSIjNDQ0ZTU4IiBzdHJva2Utd2lkdGg9IjMiLz48L2c+Cjwvc3ZnPg==';
       function drawTitle(dt) {
     X = ctx; titleT += reduceMotion ? 0 : dt;
     const t = titleT, hz = H * 0.56, u = Math.min(W / 900, H / 520), bx = W * 0.56;
@@ -4822,7 +5257,7 @@ body { display: block; background: var(--night); }
     const cx = W * 0.47, by = hz + (H - hz) * 0.3, flash = Math.floor(t * 1.6) % 2;
     X.save(); X.translate(cx, by); X.scale(u, u);
     if (titleCarImage.complete && titleCarImage.naturalWidth) {
-      X.drawImage(titleCarImage, -410, -230, 820, 338);
+      X.drawImage(titleCarImage, -170, -135, 340, 170);
     }
     X.restore();
     // light: a glow at each source, then its long reflection down the wet road
@@ -4865,6 +5300,7 @@ body { display: block; background: var(--night); }
     requestAnimationFrame(frame);
   }
   toTitle();
+  document.documentElement.dataset.nightWarrantStarted = '1';
   requestAnimationFrame(frame);
 })();
 </script>
